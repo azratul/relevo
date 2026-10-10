@@ -1,0 +1,71 @@
+{
+  "title": "command.result",
+  "description": "Host -> relay. Exactly one per received dispatch, unless the host lost the connection.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "command.result"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "commandId",
+        "sequence",
+        "epoch",
+        "status"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        },
+        "sequence": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "epoch": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "executed",
+            "failed",
+            "rejected",
+            "expired"
+          ]
+        },
+        "confirmation": {
+          "$ref": "../common.json#/$defs/Confirmation"
+        },
+        "error": {
+          "$ref": "../common.json#/$defs/Error"
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,7 @@
+{
+  "participantId": "p_Ab3dEf6hIj9kLm2n",
+  "token": "rlvp_8KxJ2mQ9vN3bT5yW7zA1cE4gH6iL0oR",
+  "state": "enabled",
+  "expiresAt": "2026-10-16T06:00:00Z",
+  "wsUrl": "wss://relay.example.org/api/v1/ws"
+}

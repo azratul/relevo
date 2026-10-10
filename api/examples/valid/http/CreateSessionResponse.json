@@ -1,0 +1,8 @@
+{
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "joinUrl": "https://relay.example.org/s/k3J9sX2bQp7LmN4vT8wYzA",
+  "wsUrl": "wss://relay.example.org/api/v1/ws",
+  "hostToken": "rlvh_Q3xT7mK2pN8vB4yW6zA0cE5gH1iL9oRsUuV",
+  "generatedPassword": "7hkq-m2xa-v9rd",
+  "expiresAt": "2026-10-16T06:00:00Z"
+}

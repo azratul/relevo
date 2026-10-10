@@ -1,0 +1,69 @@
+{
+  "protocolVersion": "1.0",
+  "type": "host.register",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000004",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "agentInstanceId": "0d9f6a52-6a2e-4c8e-9a35-2f0c1a7b9e11",
+    "agent": {
+      "name": "relevo-host",
+      "version": "0.1.0"
+    },
+    "ready": true,
+    "target": {
+      "label": "zathura (Hyprland)",
+      "focusCheck": "targeted"
+    },
+    "catalog": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "presentation.next",
+          "title": "Siguiente",
+          "description": "Avanza una diapositiva",
+          "capability": "presentation.navigate",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "confirmation": "input-injected"
+        },
+        {
+          "id": "presentation.previous",
+          "title": "Anterior",
+          "capability": "presentation.navigate",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "confirmation": "input-injected"
+        },
+        {
+          "id": "presentation.goto",
+          "title": "Ir a",
+          "capability": "presentation.navigate",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "slide"
+            ],
+            "properties": {
+              "slide": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9999
+              }
+            }
+          },
+          "confirmation": "input-injected"
+        }
+      ]
+    },
+    "features": [
+      "focus-check"
+    ]
+  }
+}

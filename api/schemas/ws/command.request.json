@@ -1,0 +1,62 @@
+{
+  "title": "command.request",
+  "description": "Controller -> relay.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "command.request"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "commandId",
+        "clientSequence",
+        "action",
+        "parameters",
+        "catalogRevision"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        },
+        "clientSequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991,
+          "description": "Strictly increasing per participant token (ADR-0013)."
+        },
+        "action": {
+          "$ref": "../common.json#/$defs/ActionId"
+        },
+        "parameters": {
+          "type": "object",
+          "maxProperties": 16
+        },
+        "catalogRevision": {
+          "$ref": "../common.json#/$defs/Revision"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

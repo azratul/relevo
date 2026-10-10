@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "required": [
+    "sessionId",
+    "joinUrl",
+    "wsUrl",
+    "hostToken",
+    "expiresAt"
+  ],
+  "properties": {
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "joinUrl": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "wsUrl": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "hostToken": {
+      "$ref": "../common.json#/$defs/Token"
+    },
+    "generatedPassword": {
+      "type": "string",
+      "description": "Present only if the relay generated the password. Shown once."
+    },
+    "expiresAt": {
+      "$ref": "../common.json#/$defs/Timestamp"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "protocolVersion": "1.0",
+  "type": "error",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000024",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "correlationId": "4f4f3838-cdf9-45aa-a786-000000000011",
+  "payload": {
+    "error": {
+      "code": "INVALID_MESSAGE",
+      "message": "payload.clientSequence is required",
+      "retryable": false
+    }
+  }
+}

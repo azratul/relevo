@@ -1,0 +1,14 @@
+{
+  "protocolVersion": "1.0",
+  "type": "command.result",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000016",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "commandId": "809d09d7-e84c-40d5-a4e6-02514a467c0e",
+    "sequence": 41,
+    "epoch": 3,
+    "status": "executed",
+    "confirmation": "input-injected",
+    "durationMs": 4
+  }
+}

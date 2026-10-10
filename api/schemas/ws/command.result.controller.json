@@ -1,0 +1,61 @@
+{
+  "title": "command.result",
+  "description": "Relay -> controller (the issuer only). Terminal status.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId",
+    "correlationId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "command.result"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "commandId",
+        "status"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        },
+        "sequence": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "executed",
+            "failed",
+            "rejected",
+            "expired",
+            "unknown"
+          ]
+        },
+        "confirmation": {
+          "$ref": "../common.json#/$defs/Confirmation"
+        },
+        "error": {
+          "$ref": "../common.json#/$defs/Error"
+        }
+      }
+    }
+  }
+}

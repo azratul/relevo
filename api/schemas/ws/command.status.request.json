@@ -1,0 +1,42 @@
+{
+  "title": "command.status.request",
+  "description": "Controller -> relay. Query a previous command of the same participant. Never re-executes.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "command.status.request"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "commandId"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

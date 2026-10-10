@@ -1,0 +1,15 @@
+{
+  "participants": [
+    {
+      "participantId": "p_Ab3dEf6hIj9kLm2n",
+      "displayName": "Ana",
+      "state": "enabled",
+      "connected": true,
+      "capabilities": [
+        "presentation.navigate"
+      ],
+      "joinedAt": "2026-10-15T18:00:00Z"
+    }
+  ],
+  "authzRevision": 4
+}

@@ -1,0 +1,57 @@
+{
+  "title": "command.status",
+  "description": "Relay -> controller.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId",
+    "correlationId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "command.status"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "commandId",
+        "found"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        },
+        "found": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "../common.json#/$defs/CommandStatus"
+        },
+        "sequence": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "confirmation": {
+          "$ref": "../common.json#/$defs/Confirmation"
+        },
+        "error": {
+          "$ref": "../common.json#/$defs/Error"
+        }
+      }
+    }
+  }
+}

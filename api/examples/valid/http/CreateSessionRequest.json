@@ -1,0 +1,7 @@
+{
+  "requireApproval": false,
+  "defaultCapabilities": [
+    "presentation.navigate"
+  ],
+  "ttlSeconds": 14400
+}

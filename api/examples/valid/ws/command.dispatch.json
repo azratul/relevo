@@ -1,0 +1,20 @@
+{
+  "protocolVersion": "1.0",
+  "type": "command.dispatch",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000015",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "commandId": "809d09d7-e84c-40d5-a4e6-02514a467c0e",
+    "sequence": 41,
+    "epoch": 3,
+    "action": "presentation.next",
+    "parameters": {},
+    "catalogRevision": 1,
+    "authzRevision": 4,
+    "issuedBy": {
+      "participantId": "p_Ab3dEf6hIj9kLm2n",
+      "displayName": "Ana"
+    },
+    "validForMs": 3000
+  }
+}

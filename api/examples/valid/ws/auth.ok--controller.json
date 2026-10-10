@@ -1,0 +1,40 @@
+{
+  "protocolVersion": "1.0",
+  "type": "auth.ok",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000002",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "correlationId": "4f4f3838-cdf9-45aa-a786-000000000001",
+  "payload": {
+    "role": "controller",
+    "participantId": "p_Ab3dEf6hIj9kLm2n",
+    "connectionId": "c_Zx8vWq3eRt5yUi7o",
+    "protocolVersion": "1.0",
+    "capabilities": [
+      "webrtc"
+    ],
+    "heartbeat": {
+      "intervalMs": 15000,
+      "timeoutMs": 45000
+    },
+    "limits": {
+      "maxMessageBytes": 16384,
+      "maxMessagesPerSecond": 20,
+      "commandValidForMs": 3000,
+      "maxInFlightCommands": 8
+    },
+    "rtc": {
+      "iceServers": [
+        {
+          "urls": [
+            "stun:stun.l.google.com:19302"
+          ]
+        },
+        {
+          "urls": [
+            "stun:stun.cloudflare.com:3478"
+          ]
+        }
+      ]
+    }
+  }
+}

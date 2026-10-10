@@ -1,0 +1,10 @@
+{
+  "protocolVersion": "1.0",
+  "type": "host.registered",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000005",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "correlationId": "4f4f3838-cdf9-45aa-a786-000000000004",
+  "payload": {
+    "epoch": 3
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "title": "host.update",
+  "description": "Host -> relay. Readiness, target or catalog changed. A catalog change MUST increase its revision.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "host.update"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        },
+        "readinessReason": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "target": {
+          "$ref": "../common.json#/$defs/Target"
+        },
+        "catalog": {
+          "$ref": "../common.json#/$defs/Catalog"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

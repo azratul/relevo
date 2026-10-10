@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "required": [
+    "protocolVersions",
+    "appVersion",
+    "sessionCreation",
+    "limits"
+  ],
+  "properties": {
+    "protocolVersions": {
+      "type": "array",
+      "items": {
+        "$ref": "../common.json#/$defs/ProtocolVersion"
+      }
+    },
+    "appVersion": {
+      "type": "string"
+    },
+    "sessionCreation": {
+      "type": "string",
+      "enum": [
+        "open",
+        "token"
+      ]
+    },
+    "limits": {
+      "$ref": "../common.json#/$defs/Limits"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 64
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "protocolVersion": "1.0",
+  "type": "participant.updated",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000010",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "participant": {
+      "participantId": "p_Ab3dEf6hIj9kLm2n",
+      "displayName": "Ana",
+      "state": "disabled",
+      "connected": true,
+      "capabilities": [
+        "presentation.navigate"
+      ],
+      "joinedAt": "2026-10-15T18:00:00Z"
+    },
+    "authzRevision": 5
+  }
+}

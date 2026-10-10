@@ -1,0 +1,15 @@
+{
+  "protocolVersion": "1.0",
+  "type": "command.request",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000012",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "commandId": "1b0c7f4e-3d2a-4b8c-9e6f-5a4d3c2b1a09",
+    "clientSequence": 2,
+    "action": "presentation.goto",
+    "parameters": {
+      "slide": 12
+    },
+    "catalogRevision": 1
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "title": "session.closed",
+  "description": "Relay -> client/host. Credentials of this connection are no longer valid; the relay closes the socket.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "session.closed"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "enum": [
+            "host-ended",
+            "expired",
+            "idle",
+            "relay-shutdown",
+            "revoked",
+            "password-rotated"
+          ]
+        }
+      }
+    }
+  }
+}

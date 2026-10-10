@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "required": [
+    "participantId",
+    "token",
+    "state",
+    "expiresAt",
+    "wsUrl"
+  ],
+  "properties": {
+    "participantId": {
+      "$ref": "../common.json#/$defs/ParticipantId"
+    },
+    "token": {
+      "$ref": "../common.json#/$defs/Token"
+    },
+    "state": {
+      "$ref": "../common.json#/$defs/ParticipantState"
+    },
+    "expiresAt": {
+      "$ref": "../common.json#/$defs/Timestamp"
+    },
+    "wsUrl": {
+      "type": "string",
+      "maxLength": 2048
+    }
+  }
+}

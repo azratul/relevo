@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": [
+    "type",
+    "sdp"
+  ],
+  "properties": {
+    "type": {
+      "const": "answer"
+    },
+    "sdp": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 65536
+    }
+  }
+}

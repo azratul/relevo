@@ -1,0 +1,87 @@
+{
+  "title": "host.register",
+  "description": "Host -> relay, after auth.ok. Starts a new execution epoch and fences any previous host connection.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "host.register"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "agentInstanceId",
+        "agent",
+        "ready",
+        "target",
+        "catalog"
+      ],
+      "properties": {
+        "agentInstanceId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        },
+        "agent": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[^\u0000-\u001f\u007f]+$"
+            },
+            "version": {
+              "type": "string",
+              "maxLength": 32,
+              "pattern": "^[^\u0000-\u001f\u007f]+$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "readinessReason": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "target": {
+          "$ref": "../common.json#/$defs/Target"
+        },
+        "catalog": {
+          "$ref": "../common.json#/$defs/Catalog"
+        },
+        "features": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

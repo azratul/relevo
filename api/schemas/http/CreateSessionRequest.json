@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "required": [],
+  "properties": {
+    "password": {
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 128,
+      "description": "Optional host-chosen passphrase. If absent the relay generates one."
+    },
+    "requireApproval": {
+      "type": "boolean"
+    },
+    "defaultCapabilities": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "$ref": "../common.json#/$defs/Capability"
+      }
+    },
+    "ttlSeconds": {
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 86400
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,16 @@
+{
+  "protocolVersions": [
+    "1.0"
+  ],
+  "appVersion": "0.1.0",
+  "sessionCreation": "open",
+  "limits": {
+    "maxMessageBytes": 16384,
+    "maxMessagesPerSecond": 20,
+    "commandValidForMs": 3000,
+    "maxInFlightCommands": 8
+  },
+  "capabilities": [
+    "webrtc"
+  ]
+}

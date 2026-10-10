@@ -1,0 +1,12 @@
+{
+  "protocolVersion": "1.0",
+  "type": "auth.hello",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000001",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "client": {
+      "name": "relevo-web",
+      "version": "0.1.0"
+    }
+  }
+}

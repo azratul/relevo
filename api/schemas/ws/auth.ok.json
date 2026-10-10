@@ -1,0 +1,117 @@
+{
+  "title": "auth.ok",
+  "description": "Relay -> client/host. Authentication succeeded; a session.snapshot follows.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId",
+    "correlationId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "auth.ok"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "role",
+        "connectionId",
+        "protocolVersion",
+        "heartbeat",
+        "limits"
+      ],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": [
+            "controller",
+            "host"
+          ]
+        },
+        "participantId": {
+          "$ref": "../common.json#/$defs/ParticipantId"
+        },
+        "connectionId": {
+          "$ref": "../common.json#/$defs/ConnectionId"
+        },
+        "protocolVersion": {
+          "$ref": "../common.json#/$defs/ProtocolVersion"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "description": "Optional protocol features supported by the relay, e.g. \"webrtc\"."
+        },
+        "heartbeat": {
+          "type": "object",
+          "required": [
+            "intervalMs",
+            "timeoutMs"
+          ],
+          "properties": {
+            "intervalMs": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "timeoutMs": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "limits": {
+          "$ref": "../common.json#/$defs/Limits"
+        },
+        "rtc": {
+          "type": "object",
+          "required": [
+            "iceServers"
+          ],
+          "description": "Present when the controller may try the WebRTC DataChannel transport (ADR-0014). STUN only.",
+          "properties": {
+            "iceServers": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "required": [
+                  "urls"
+                ],
+                "properties": {
+                  "urls": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "string",
+                      "maxLength": 256,
+                      "pattern": "^(stun|stuns|turn|turns):"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

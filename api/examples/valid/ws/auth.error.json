@@ -1,0 +1,12 @@
+{
+  "protocolVersion": "1.0",
+  "type": "auth.error",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000003",
+  "payload": {
+    "error": {
+      "code": "AUTH_FAILED",
+      "message": "Authentication failed",
+      "retryable": false
+    }
+  }
+}

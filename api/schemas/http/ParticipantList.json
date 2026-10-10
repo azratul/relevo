@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "required": [
+    "participants",
+    "authzRevision"
+  ],
+  "properties": {
+    "participants": {
+      "type": "array",
+      "items": {
+        "$ref": "../common.json#/$defs/Participant"
+      }
+    },
+    "authzRevision": {
+      "$ref": "../common.json#/$defs/Counter"
+    }
+  }
+}

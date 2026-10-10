@@ -1,0 +1,21 @@
+{
+  "protocolVersion": "1.0",
+  "type": "host.register",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000004",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "agentInstanceId": "0d9f6a52-6a2e-4c8e-9a35-2f0c1a7b9e11",
+    "agent": {
+      "name": "relevo-host",
+      "version": "0.1.0"
+    },
+    "ready": true,
+    "target": {
+      "label": "zathura (Hyprland)",
+      "focusCheck": "targeted"
+    },
+    "features": [
+      "focus-check"
+    ]
+  }
+}

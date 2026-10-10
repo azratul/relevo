@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "Too many attempts",
+    "retryable": true,
+    "retryAfterMs": 4000
+  }
+}

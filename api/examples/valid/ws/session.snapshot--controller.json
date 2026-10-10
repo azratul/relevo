@@ -1,0 +1,81 @@
+{
+  "protocolVersion": "1.0",
+  "type": "session.snapshot",
+  "messageId": "4f4f3838-cdf9-45aa-a786-000000000007",
+  "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+  "payload": {
+    "sessionId": "k3J9sX2bQp7LmN4vT8wYzA",
+    "status": "open",
+    "paused": false,
+    "requireApproval": false,
+    "authzRevision": 4,
+    "host": {
+      "online": true,
+      "ready": true,
+      "target": {
+        "label": "zathura (Hyprland)",
+        "focusCheck": "targeted"
+      },
+      "epoch": 3
+    },
+    "catalog": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "presentation.next",
+          "title": "Siguiente",
+          "description": "Avanza una diapositiva",
+          "capability": "presentation.navigate",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "confirmation": "input-injected"
+        },
+        {
+          "id": "presentation.previous",
+          "title": "Anterior",
+          "capability": "presentation.navigate",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "confirmation": "input-injected"
+        },
+        {
+          "id": "presentation.goto",
+          "title": "Ir a",
+          "capability": "presentation.navigate",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "slide"
+            ],
+            "properties": {
+              "slide": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9999
+              }
+            }
+          },
+          "confirmation": "input-injected"
+        }
+      ]
+    },
+    "expiresAt": "2026-10-16T06:00:00Z",
+    "you": {
+      "participantId": "p_Ab3dEf6hIj9kLm2n",
+      "displayName": "Ana",
+      "state": "enabled",
+      "connected": true,
+      "capabilities": [
+        "presentation.navigate"
+      ],
+      "joinedAt": "2026-10-15T18:00:00Z"
+    }
+  }
+}

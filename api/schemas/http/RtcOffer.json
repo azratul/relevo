@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "type",
+    "sdp"
+  ],
+  "description": "Browser SDP offer with all ICE candidates gathered (non-trickle).",
+  "properties": {
+    "type": {
+      "const": "offer"
+    },
+    "sdp": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32768
+    }
+  }
+}

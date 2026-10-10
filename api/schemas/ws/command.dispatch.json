@@ -1,0 +1,87 @@
+{
+  "title": "command.dispatch",
+  "description": "Relay -> host. All fields are set by the relay from authenticated state; a controller cannot forge them.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "type",
+    "messageId",
+    "payload",
+    "sessionId"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "$ref": "../common.json#/$defs/ProtocolVersion"
+    },
+    "type": {
+      "const": "command.dispatch"
+    },
+    "messageId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "sessionId": {
+      "$ref": "../common.json#/$defs/SessionId"
+    },
+    "correlationId": {
+      "$ref": "../common.json#/$defs/Uuid"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "commandId",
+        "sequence",
+        "epoch",
+        "action",
+        "parameters",
+        "catalogRevision",
+        "authzRevision",
+        "issuedBy",
+        "validForMs"
+      ],
+      "properties": {
+        "commandId": {
+          "$ref": "../common.json#/$defs/Uuid"
+        },
+        "sequence": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "epoch": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "action": {
+          "$ref": "../common.json#/$defs/ActionId"
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "catalogRevision": {
+          "$ref": "../common.json#/$defs/Revision"
+        },
+        "authzRevision": {
+          "$ref": "../common.json#/$defs/Counter"
+        },
+        "issuedBy": {
+          "type": "object",
+          "required": [
+            "participantId",
+            "displayName"
+          ],
+          "properties": {
+            "participantId": {
+              "$ref": "../common.json#/$defs/ParticipantId"
+            },
+            "displayName": {
+              "$ref": "../common.json#/$defs/DisplayName"
+            }
+          }
+        },
+        "validForMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000,
+          "description": "Relative validity budget, measured by the host on its monotonic clock from reception."
+        }
+      }
+    }
+  }
+}
