@@ -1,0 +1,15 @@
+{
+  "name": "relevo-contract-checks",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "check": "node check.mjs"
+  },
+  "devDependencies": {
+    "@asyncapi/parser": "3.6.3",
+    "@redocly/cli": "2.57.0",
+    "ajv": "8.20.0",
+    "yaml": "2.9.1"
+  }
+}

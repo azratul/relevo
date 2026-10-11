@@ -1,0 +1,9 @@
+extends:
+  - recommended
+rules:
+  # Example payloads live in api/examples and are validated by check.mjs.
+  no-invalid-media-type-examples: off
+  # /healthz and /api/v1/info have no client error responses by design.
+  operation-4xx-response: warn
+  security-defined: error
+  info-license-strict: error

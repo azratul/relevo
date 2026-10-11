@@ -1,0 +1,428 @@
+asyncapi: 3.0.0
+info:
+  title: Relevo WebSocket protocol
+  version: 1.0.0
+  description: |
+    WebSocket part of the Relevo contract, described from the point of view of
+    the **relay** (`receive` = sent to the relay, `send` = sent by the relay).
+    HTTP operations are in `openapi.yaml`; semantics (state machines, ordering,
+    deduplication, epochs, expiry, errors) are normative in `docs/protocol.md`.
+
+    One JSON envelope per text frame:
+    `{protocolVersion, type, messageId, sessionId?, correlationId?, payload}`.
+    `protocolVersion` is MAJOR.MINOR; peers must share the major version.
+    Messages sent to the relay are strict (unknown fields rejected); messages
+    sent by the relay may gain optional fields in minor versions and
+    receivers must ignore unknown fields.
+
+    Transports: the same envelopes travel over (1) this WebSocket and (2)
+    optionally a WebRTC DataChannel (label `relevo`, reliable and ordered)
+    opened with `POST /api/v1/sessions/{id}/rtc` (see openapi.yaml). The
+    DataChannel also starts with `auth.hello`; a successful auth there
+    supersedes the WebSocket (4009). DataChannels have no close codes: the
+    relay always sends `auth.error` or `session.closed` before closing.
+
+    Authentication: no token in the URL or headers. The first message must be
+    `auth.hello` within the auth timeout; before that the relay reveals nothing.
+    The role (controller or host) is derived from the token.
+
+    Close codes: 4000 protocol error, 4001 auth failed/timeout, 4002
+    unsupported version, 4003 revoked, 4004 session closed, 4008 policy
+    (rate limit), 4009 superseded by a newer connection, 1009 message too big
+    (limit announced in auth.ok), 1001 relay shutting down.
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+defaultContentType: application/json
+servers:
+  production:
+    host: example.trycloudflare.com
+    protocol: wss
+    description: Relay embedded in relevo-host behind the host's tunnel. Same origin as the web controller.
+  development:
+    host: 127.0.0.1:8080
+    protocol: ws
+    description: Loopback development relay only (RELEVO_DEV_INSECURE=1).
+channels:
+  controllerSocket:
+    address: /api/v1/ws
+    title: Controller connection
+    description: Connection authenticated with a participant token.
+    messages:
+      authHello:
+        $ref: '#/components/messages/authHello'
+      commandRequest:
+        $ref: '#/components/messages/commandRequest'
+      commandStatusRequest:
+        $ref: '#/components/messages/commandStatusRequest'
+      ping:
+        $ref: '#/components/messages/ping'
+      authOk:
+        $ref: '#/components/messages/authOk'
+      authError:
+        $ref: '#/components/messages/authError'
+      sessionSnapshot:
+        $ref: '#/components/messages/sessionSnapshot'
+      sessionUpdated:
+        $ref: '#/components/messages/sessionUpdated'
+      sessionClosed:
+        $ref: '#/components/messages/sessionClosed'
+      participantUpdated:
+        $ref: '#/components/messages/participantUpdated'
+      commandAccepted:
+        $ref: '#/components/messages/commandAccepted'
+      commandRejected:
+        $ref: '#/components/messages/commandRejected'
+      commandResultController:
+        $ref: '#/components/messages/commandResultController'
+      commandStatus:
+        $ref: '#/components/messages/commandStatus'
+      pong:
+        $ref: '#/components/messages/pong'
+      error:
+        $ref: '#/components/messages/error'
+  hostSocket:
+    address: /api/v1/ws
+    title: Host (receiver) connection
+    description: Same endpoint, authenticated with the host token. Only one executor per session; a newer host connection fences the older one (4009).
+    messages:
+      authHello:
+        $ref: '#/components/messages/authHello'
+      hostRegister:
+        $ref: '#/components/messages/hostRegister'
+      hostUpdate:
+        $ref: '#/components/messages/hostUpdate'
+      commandResultHost:
+        $ref: '#/components/messages/commandResultHost'
+      ping:
+        $ref: '#/components/messages/ping'
+      authOk:
+        $ref: '#/components/messages/authOk'
+      authError:
+        $ref: '#/components/messages/authError'
+      hostRegistered:
+        $ref: '#/components/messages/hostRegistered'
+      sessionSnapshot:
+        $ref: '#/components/messages/sessionSnapshot'
+      sessionUpdated:
+        $ref: '#/components/messages/sessionUpdated'
+      sessionClosed:
+        $ref: '#/components/messages/sessionClosed'
+      participantUpdated:
+        $ref: '#/components/messages/participantUpdated'
+      commandDispatch:
+        $ref: '#/components/messages/commandDispatch'
+      pong:
+        $ref: '#/components/messages/pong'
+      error:
+        $ref: '#/components/messages/error'
+operations:
+  receiveFromController:
+    action: receive
+    channel:
+      $ref: '#/channels/controllerSocket'
+    summary: "Messages a controller may send (only after auth, except auth.hello and ping)."
+    messages:
+      - $ref: '#/channels/controllerSocket/messages/authHello'
+      - $ref: '#/channels/controllerSocket/messages/commandRequest'
+      - $ref: '#/channels/controllerSocket/messages/commandStatusRequest'
+      - $ref: '#/channels/controllerSocket/messages/ping'
+  sendToController:
+    action: send
+    channel:
+      $ref: '#/channels/controllerSocket'
+    summary: "Messages the relay sends to a controller."
+    messages:
+      - $ref: '#/channels/controllerSocket/messages/authOk'
+      - $ref: '#/channels/controllerSocket/messages/authError'
+      - $ref: '#/channels/controllerSocket/messages/sessionSnapshot'
+      - $ref: '#/channels/controllerSocket/messages/sessionUpdated'
+      - $ref: '#/channels/controllerSocket/messages/sessionClosed'
+      - $ref: '#/channels/controllerSocket/messages/participantUpdated'
+      - $ref: '#/channels/controllerSocket/messages/commandAccepted'
+      - $ref: '#/channels/controllerSocket/messages/commandRejected'
+      - $ref: '#/channels/controllerSocket/messages/commandResultController'
+      - $ref: '#/channels/controllerSocket/messages/commandStatus'
+      - $ref: '#/channels/controllerSocket/messages/pong'
+      - $ref: '#/channels/controllerSocket/messages/error'
+  receiveFromHost:
+    action: receive
+    channel:
+      $ref: '#/channels/hostSocket'
+    summary: "Messages a host may send."
+    messages:
+      - $ref: '#/channels/hostSocket/messages/authHello'
+      - $ref: '#/channels/hostSocket/messages/hostRegister'
+      - $ref: '#/channels/hostSocket/messages/hostUpdate'
+      - $ref: '#/channels/hostSocket/messages/commandResultHost'
+      - $ref: '#/channels/hostSocket/messages/ping'
+  sendToHost:
+    action: send
+    channel:
+      $ref: '#/channels/hostSocket'
+    summary: "Messages the relay sends to the host."
+    messages:
+      - $ref: '#/channels/hostSocket/messages/authOk'
+      - $ref: '#/channels/hostSocket/messages/authError'
+      - $ref: '#/channels/hostSocket/messages/hostRegistered'
+      - $ref: '#/channels/hostSocket/messages/sessionSnapshot'
+      - $ref: '#/channels/hostSocket/messages/sessionUpdated'
+      - $ref: '#/channels/hostSocket/messages/sessionClosed'
+      - $ref: '#/channels/hostSocket/messages/participantUpdated'
+      - $ref: '#/channels/hostSocket/messages/commandDispatch'
+      - $ref: '#/channels/hostSocket/messages/pong'
+      - $ref: '#/channels/hostSocket/messages/error'
+components:
+  messages:
+    authHello:
+      name: auth.hello
+      title: auth.hello
+      summary: "First message from controller or host. Carries the token. Must arrive within the auth timeout."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/auth.hello.json'
+      examples:
+        - name: auth.hello
+          payload:
+            $ref: './examples/valid/ws/auth.hello.json'
+    authOk:
+      name: auth.ok
+      title: auth.ok
+      summary: "Authentication succeeded. Always the first message from the relay, followed by session.snapshot."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/auth.ok.json'
+      examples:
+        - name: auth.ok--controller
+          payload:
+            $ref: './examples/valid/ws/auth.ok--controller.json'
+    authError:
+      name: auth.error
+      title: auth.error
+      summary: "Authentication failed; the relay closes the socket (4001, or 4002 for UNSUPPORTED_VERSION)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/auth.error.json'
+      examples:
+        - name: auth.error
+          payload:
+            $ref: './examples/valid/ws/auth.error.json'
+    hostRegister:
+      name: host.register
+      title: host.register
+      summary: "Host announces catalog, target and readiness. Starts a new epoch and fences older host connections."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/host.register.json'
+      examples:
+        - name: host.register
+          payload:
+            $ref: './examples/valid/ws/host.register.json'
+    hostRegistered:
+      name: host.registered
+      title: host.registered
+      summary: "The epoch assigned by the relay."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/host.registered.json'
+      examples:
+        - name: host.registered
+          payload:
+            $ref: './examples/valid/ws/host.registered.json'
+    hostUpdate:
+      name: host.update
+      title: host.update
+      summary: "Readiness, target or catalog changed (catalog revision must increase)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/host.update.json'
+      examples:
+        - name: host.update
+          payload:
+            $ref: './examples/valid/ws/host.update.json'
+    sessionSnapshot:
+      name: session.snapshot
+      title: session.snapshot
+      summary: "Full role-filtered state, right after auth.ok."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/session.snapshot.json'
+      examples:
+        - name: session.snapshot--controller
+          payload:
+            $ref: './examples/valid/ws/session.snapshot--controller.json'
+    sessionUpdated:
+      name: session.updated
+      title: session.updated
+      summary: "Full role-filtered state after any change; replaces the previous one."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/session.updated.json'
+      examples:
+        - name: session.updated--host
+          payload:
+            $ref: './examples/valid/ws/session.updated--host.json'
+    sessionClosed:
+      name: session.closed
+      title: session.closed
+      summary: "Credentials of this connection are no longer valid; the socket closes (4003/4004)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/session.closed.json'
+      examples:
+        - name: session.closed
+          payload:
+            $ref: './examples/valid/ws/session.closed.json'
+    participantUpdated:
+      name: participant.updated
+      title: participant.updated
+      summary: "A participant changed (to the host: anyone; to a controller: only itself)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/participant.updated.json'
+      examples:
+        - name: participant.updated
+          payload:
+            $ref: './examples/valid/ws/participant.updated.json'
+    commandRequest:
+      name: command.request
+      title: command.request
+      summary: "Controller asks for an action. Identity comes from the connection, never from the payload."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.request.json'
+      examples:
+        - name: command.request
+          payload:
+            $ref: './examples/valid/ws/command.request.json'
+    commandAccepted:
+      name: command.accepted
+      title: command.accepted
+      summary: "Validated and admitted for dispatch, with the session sequence. NOT executed."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.accepted.json'
+      examples:
+        - name: command.accepted
+          payload:
+            $ref: './examples/valid/ws/command.accepted.json'
+    commandRejected:
+      name: command.rejected
+      title: command.rejected
+      summary: "Refused by the relay; will never be executed."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.rejected.json'
+      examples:
+        - name: command.rejected
+          payload:
+            $ref: './examples/valid/ws/command.rejected.json'
+    commandDispatch:
+      name: command.dispatch
+      title: command.dispatch
+      summary: "Relay to host. Identity, sequence, epoch, authzRevision and validity budget are set by the relay."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.dispatch.json'
+      examples:
+        - name: command.dispatch
+          payload:
+            $ref: './examples/valid/ws/command.dispatch.json'
+    commandResultHost:
+      name: command.result
+      title: command.result
+      summary: "Host outcome: executed, failed, rejected or expired."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.result.host.json'
+      examples:
+        - name: command.result.host
+          payload:
+            $ref: './examples/valid/ws/command.result.host.json'
+    commandResultController:
+      name: command.result
+      title: command.result
+      summary: "Terminal outcome for the issuer, including unknown (EXECUTION_UNKNOWN)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.result.controller.json'
+      examples:
+        - name: command.result.controller
+          payload:
+            $ref: './examples/valid/ws/command.result.controller.json'
+    commandStatusRequest:
+      name: command.status.request
+      title: command.status.request
+      summary: "Ask for the status of an own command. Never re-executes."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.status.request.json'
+      examples:
+        - name: command.status.request
+          payload:
+            $ref: './examples/valid/ws/command.status.request.json'
+    commandStatus:
+      name: command.status
+      title: command.status
+      summary: "Status of an own command; found=false means the relay never processed it."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/command.status.json'
+      examples:
+        - name: command.status
+          payload:
+            $ref: './examples/valid/ws/command.status.json'
+    ping:
+      name: ping
+      title: ping
+      summary: "Application heartbeat (browsers cannot send WebSocket ping frames)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/ping.json'
+      examples:
+        - name: ping
+          payload:
+            $ref: './examples/valid/ws/ping.json'
+    pong:
+      name: pong
+      title: pong
+      summary: "Answer to ping; correlationId = ping messageId."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/pong.json'
+      examples:
+        - name: pong
+          payload:
+            $ref: './examples/valid/ws/pong.json'
+    error:
+      name: error
+      title: error
+      summary: "Error not tied to a command (malformed message, rate limit, wrong role)."
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $ref: './schemas/ws/error.json'
+      examples:
+        - name: error
+          payload:
+            $ref: './examples/valid/ws/error.json'

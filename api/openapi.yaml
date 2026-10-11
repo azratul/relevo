@@ -1,0 +1,393 @@
+openapi: 3.1.1
+info:
+  title: Relevo relay HTTP API
+  version: 1.0.0
+  summary: Sessions, login and host administration for Relevo.
+  description: |
+    HTTP part of the Relevo contract. The WebSocket part is in `asyncapi.yaml`;
+    the normative semantics are in `docs/protocol.md`. All bodies are JSON
+    validated against `api/schemas/http/*.json` (common subset of JSON Schema
+    draft-07 and 2020-12, see ADR-0012).
+
+    **Roles and credentials** (all are opaque Bearer tokens, never in URLs):
+
+    | Credential | Obtained from | Grants |
+    |---|---|---|
+    | creation token (optional) | relay operator | `POST /sessions` when the relay runs in `token` mode |
+    | host token (`rlvh_…`) | `POST /sessions` response | everything on *that* session |
+    | participant token (`rlvp_…`) | `POST /sessions/{id}/join` | own state, leave, WebSocket as controller |
+
+    Data exposure by role: participants only ever see themselves (`you`),
+    never other participants; hosts see the full participant list. Nothing is
+    revealed before authentication, and an unknown session answers exactly
+    like a wrong password (`401 AUTH_FAILED`).
+
+    Browser requests must come from an allowed Origin (exact match). No
+    endpoint mutates state on GET.
+  license:
+    name: MIT
+    identifier: MIT
+  x-protocol-version: "1.0"
+servers:
+  - url: https://example.trycloudflare.com
+    description: |
+      Usually the relay embedded in relevo-host, published through the tunnel
+      the host chose (random public URL per session). Plain http only for
+      loopback development or a tunnel the host explicitly accepted as
+      unencrypted.
+tags:
+  - name: public
+    description: No credential required; no session data.
+  - name: speaker
+    description: Speaker (controller) operations, participant token.
+  - name: host
+    description: Host operations, host token (or creation policy).
+paths:
+  /healthz:
+    get:
+      tags: [public]
+      operationId: health
+      summary: Liveness probe (no secrets, no session data)
+      security: []
+      responses:
+        "200":
+          description: Relay is running
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status: { const: ok }
+  /api/v1/info:
+    get:
+      tags: [public]
+      operationId: getInfo
+      summary: Protocol versions, creation policy and limits
+      security: []
+      responses:
+        "200":
+          description: Relay information
+          content:
+            application/json:
+              schema: { $ref: "./schemas/http/Info.json" }
+              examples:
+                default: { externalValue: "./examples/valid/http/Info.json" }
+  /api/v1/sessions:
+    post:
+      tags: [host]
+      operationId: createSession
+      summary: Create a session and obtain the host credential
+      description: |
+        Anonymous creation is limited per client IP and globally
+        (`RATE_LIMITED`). When the relay runs with
+        `RELEVO_SESSION_CREATION=token`, a creation token is required.
+        If `password` is omitted the relay generates one and returns it once
+        in `generatedPassword`. The password is never part of `joinUrl`.
+      security:
+        - {}
+        - creationToken: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: "./schemas/http/CreateSessionRequest.json" }
+            examples:
+              generated: { externalValue: "./examples/valid/http/CreateSessionRequest.json" }
+              passphrase: { externalValue: "./examples/valid/http/CreateSessionRequest--with-passphrase.json" }
+      responses:
+        "201":
+          description: Session created. `hostToken` is only ever returned here.
+          content:
+            application/json:
+              schema: { $ref: "./schemas/http/CreateSessionResponse.json" }
+              examples:
+                default: { externalValue: "./examples/valid/http/CreateSessionResponse.json" }
+        "400": { $ref: "#/components/responses/InvalidMessage" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+  /api/v1/sessions/{id}:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    patch:
+      tags: [host]
+      operationId: patchSession
+      summary: Pause/resume control or toggle manual approval
+      description: Increments `authzRevision`; a pause takes effect for every later command and the host drops queued ones.
+      security:
+        - hostToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "./schemas/http/SessionPatch.json" }
+            examples:
+              pause: { externalValue: "./examples/valid/http/SessionPatch.json" }
+      responses:
+        "200":
+          description: Host view of the session
+          content:
+            application/json:
+              schema: { $ref: "./schemas/common.json#/$defs/SessionView" }
+        "400": { $ref: "#/components/responses/InvalidMessage" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    delete:
+      tags: [host]
+      operationId: endSession
+      summary: End the session; every credential of the session becomes invalid
+      security:
+        - hostToken: []
+      responses:
+        "204": { description: Session ended }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/v1/sessions/{id}/join:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    post:
+      tags: [speaker]
+      operationId: join
+      summary: Speaker login with the session password
+      description: |
+        The password travels only in this body (TLS). The relay verifies it
+        against an Argon2id hash under a global concurrency limit. Failures
+        are rate limited per IP and per session+IP with exponential lockout;
+        while locked out even the right password answers `429`.
+        With manual approval the new participant is `pending`.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "./schemas/http/JoinRequest.json" }
+            examples:
+              default: { externalValue: "./examples/valid/http/JoinRequest.json" }
+      responses:
+        "200":
+          description: Individual participant token (opaque, revocable, expiring)
+          content:
+            application/json:
+              schema: { $ref: "./schemas/http/JoinResponse.json" }
+              examples:
+                default: { externalValue: "./examples/valid/http/JoinResponse.json" }
+        "400": { $ref: "#/components/responses/InvalidMessage" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+  /api/v1/sessions/{id}/leave:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    post:
+      tags: [speaker]
+      operationId: leave
+      summary: Speaker logout (revokes the participant token)
+      security:
+        - participantToken: []
+      responses:
+        "204": { description: Token revoked }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/v1/sessions/{id}/state:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    get:
+      tags: [speaker, host]
+      operationId: getState
+      summary: Own role-filtered view of the session and the authorized catalog
+      security:
+        - participantToken: []
+        - hostToken: []
+      responses:
+        "200":
+          description: Participants get `you`; the host gets `participants`.
+          content:
+            application/json:
+              schema: { $ref: "./schemas/common.json#/$defs/SessionView" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+  /api/v1/sessions/{id}/participants:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    get:
+      tags: [host]
+      operationId: listParticipants
+      summary: List participants (host only)
+      security:
+        - hostToken: []
+      responses:
+        "200":
+          description: Participants and current authorization revision
+          content:
+            application/json:
+              schema: { $ref: "./schemas/http/ParticipantList.json" }
+              examples:
+                default: { externalValue: "./examples/valid/http/ParticipantList.json" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/v1/sessions/{id}/participants/{participantId}:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+      - name: participantId
+        in: path
+        required: true
+        schema: { $ref: "./schemas/common.json#/$defs/ParticipantId" }
+    patch:
+      tags: [host]
+      operationId: patchParticipant
+      summary: Approve/enable, disable or revoke a speaker; set capabilities
+      description: |
+        `enabled` also approves a `pending` speaker. `revoked` is terminal: the
+        token dies, the speaker's socket is closed with `session.closed`
+        (`revoked`). A command already executed cannot be undone.
+      security:
+        - hostToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "./schemas/http/ParticipantPatch.json" }
+            examples:
+              disable: { externalValue: "./examples/valid/http/ParticipantPatch.json" }
+      responses:
+        "200":
+          description: Updated participant
+          content:
+            application/json:
+              schema: { $ref: "./schemas/common.json#/$defs/Participant" }
+        "400": { $ref: "#/components/responses/InvalidMessage" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /api/v1/sessions/{id}/password:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    post:
+      tags: [host]
+      operationId: rotatePassword
+      summary: Rotate the password and revoke every speaker
+      description: The host token keeps working. Omit `password` to have one generated.
+      security:
+        - hostToken: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: "./schemas/http/PasswordRotateRequest.json" }
+      responses:
+        "200":
+          description: Rotated
+          content:
+            application/json:
+              schema: { $ref: "./schemas/http/PasswordRotateResponse.json" }
+              examples:
+                default: { externalValue: "./examples/valid/http/PasswordRotateResponse.json" }
+        "400": { $ref: "#/components/responses/InvalidMessage" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+  /api/v1/sessions/{id}/rtc:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    post:
+      tags: [speaker]
+      operationId: rtcOffer
+      summary: Open a direct WebRTC DataChannel (optional transport)
+      description: |
+        Available when `auth.ok.capabilities` (or `/api/v1/info`) contains
+        `webrtc`. Non-trickle signalling: send an SDP offer with every ICE
+        candidate already gathered; the answer also carries all candidates.
+        The offer MUST create one reliable, ordered DataChannel labelled
+        `relevo`. Over it the controller sends `auth.hello` again; on success
+        the relay closes the controller's previous WebSocket with 4009.
+        ICE servers are STUN only (address discovery); nothing is relayed by
+        third parties. If ICE fails, keep using the WebSocket.
+      security:
+        - participantToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "./schemas/http/RtcOffer.json" }
+            examples:
+              default: { externalValue: "./examples/valid/http/RtcOffer.json" }
+      responses:
+        "200":
+          description: SDP answer
+          content:
+            application/json:
+              schema: { $ref: "./schemas/http/RtcAnswer.json" }
+              examples:
+                default: { externalValue: "./examples/valid/http/RtcAnswer.json" }
+        "400": { $ref: "#/components/responses/InvalidMessage" }
+        "401": { $ref: "#/components/responses/AuthFailed" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+  /api/v1/ws:
+    get:
+      tags: [speaker, host]
+      operationId: openWebSocket
+      summary: WebSocket upgrade (protocol in asyncapi.yaml)
+      description: |
+        No credential in the URL or headers: the first message must be
+        `auth.hello` with the token, within the authentication timeout
+        (default 5 s). Browser Origins must match the allow list exactly;
+        native clients send no Origin and still need the token.
+      security: []
+      responses:
+        "101": { description: Switching Protocols }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+components:
+  parameters:
+    SessionId:
+      name: id
+      in: path
+      required: true
+      description: Public session id. Grants nothing by itself.
+      schema: { $ref: "./schemas/common.json#/$defs/SessionId" }
+  securitySchemes:
+    hostToken:
+      type: http
+      scheme: bearer
+      description: Host credential returned by createSession. Scope = one session, role host. Never sent to browsers of speakers.
+    participantToken:
+      type: http
+      scheme: bearer
+      description: Individual speaker credential returned by join. Scope = one session, role controller. Kept only in memory by the official controller.
+    creationToken:
+      type: http
+      scheme: bearer
+      description: Operator-provided token, required only when the relay runs with RELEVO_SESSION_CREATION=token.
+  responses:
+    InvalidMessage:
+      description: "`INVALID_MESSAGE`: body does not match the schema, wrong Content-Type or too large (8 KiB)."
+      content:
+        application/json:
+          schema: { $ref: "./schemas/http/ErrorResponse.json" }
+    AuthFailed:
+      description: "`AUTH_FAILED` or `AUTH_EXPIRED`. Identical for unknown sessions, closed sessions and wrong credentials."
+      content:
+        application/json:
+          schema: { $ref: "./schemas/http/ErrorResponse.json" }
+    Forbidden:
+      description: "`FORBIDDEN`: authenticated but the role may not do this, or Origin not allowed."
+      content:
+        application/json:
+          schema: { $ref: "./schemas/http/ErrorResponse.json" }
+    NotFound:
+      description: "`NOT_FOUND` (only after authentication as host)."
+      content:
+        application/json:
+          schema: { $ref: "./schemas/http/ErrorResponse.json" }
+    RateLimited:
+      description: "`RATE_LIMITED` with `Retry-After` header and `retryAfterMs`."
+      headers:
+        Retry-After:
+          schema: { type: integer, minimum: 1 }
+      content:
+        application/json:
+          schema: { $ref: "./schemas/http/ErrorResponse.json" }
+          examples:
+            default: { externalValue: "./examples/valid/http/ErrorResponse.json" }
