@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relevo · Host</title>
+<link rel="stylesheet" href="app.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<header class="top">
+  <h1>Relevo <span class="muted" data-i18n="host">host</span></h1>
+  <div class="chips" aria-live="polite">
+    <span id="chip-conn" class="chip"></span>
+    <span id="chip-ready" class="chip"></span>
+  </div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button><button type="button" data-lang="es">ES</button>
+  </div>
+</header>
+
+<nav class="stepper" aria-label="Steps">
+  <ol>
+    <li><button type="button" data-step="1"><span class="num">1</span><span data-i18n="step1">Session</span></button></li>
+    <li><button type="button" data-step="2"><span class="num">2</span><span data-i18n="step2">Target &amp; actions</span></button></li>
+    <li><button type="button" data-step="3"><span class="num">3</span><span data-i18n="step3">Active session</span></button></li>
+    <li><button type="button" data-step="4"><span class="num">4</span><span data-i18n="step4">Speakers &amp; activity</span><span id="pending-badge" class="badge" hidden></span></button></li>
+  </ol>
+</nav>
+
+<main>
+  <p id="flash" class="flash" role="alert" hidden></p>
+
+  <!-- 1. Session -->
+  <section data-panel="1">
+    <h2 data-i18n="s1.title">How will speakers connect?</h2>
+    <p class="lead" data-i18n="s1.lead">There is no Relevo server: your computer is the server and a tunnel makes it reachable. If the speaker's browser can reach you directly (WebRTC), commands go peer-to-peer; otherwise they keep using the tunnel.</p>
+    <div id="s1-locked" class="note" hidden data-i18n="s1.locked">A session is running. End it (step 3) to change these options.</div>
+    <fieldset id="s1-form">
+      <legend class="sr" data-i18n="s1.title">How will speakers connect?</legend>
+      <div id="modes" class="modes"></div>
+      <div id="url-fields" class="row" hidden>
+        <label class="grow"><span data-i18n="s1.ownUrl">Public URL of your tunnel or proxy</span> <input id="own-url" placeholder="https://…" maxlength="300"></label>
+        <label><span data-i18n="s1.localPort">Local port</span> <input id="own-port" type="number" min="1" max="65535" placeholder="8787"></label>
+      </div>
+      <label class="row warn" id="insecure-row" hidden><input type="checkbox" id="insecure-ok"> <span data-i18n="s1.insecure">I understand this tunnel does NOT encrypt: the password and commands travel in clear text.</span></label>
+      <label class="row"><input type="checkbox" id="remember"> <span data-i18n="s1.remember">Remember this choice</span></label>
+      <details>
+        <summary data-i18n="s1.more">More options</summary>
+        <label class="row"><input type="checkbox" id="approval"> <span data-i18n="s1.approval">Approve each speaker manually</span></label>
+        <label><span data-i18n="s1.customPw">Own password (optional, at least 12 characters; empty = generated)</span>
+          <input type="password" id="custom-pw" autocomplete="new-password" maxlength="128"></label>
+      </details>
+    </fieldset>
+    <p id="ended" class="muted small"></p>
+    <div class="nav-row"><span></span><button type="button" class="primary" data-go="2" data-i18n="s1.next">Next: choose the presentation →</button></div>
+  </section>
+
+  <!-- 2. Target & actions -->
+  <section data-panel="2" hidden>
+    <h2 data-i18n="s2.title">Which window is the presentation?</h2>
+    <p class="lead" data-i18n="s2.lead">Open your presentation, then pick its window here. Relevo only sends the allowed keys to that window.</p>
+    <p id="ready" class="status"></p>
+    <ul id="perms" class="muted small"></ul>
+    <div class="row">
+      <label class="grow"><span data-i18n="s2.window">Presentation window</span> <select id="windows"><option value="" data-i18n="s2.pick">— choose —</option></select></label>
+      <button type="button" id="refresh-windows" data-i18n="s2.refresh">Refresh list</button>
+    </div>
+    <label class="row" id="unverified-row"><input type="checkbox" id="t-unverified"> <span data-i18n="s2.unverified">Send to the active window without checking focus (risk: keys may reach another application)</span></label>
+    <label><span data-i18n="s2.profile">Keys</span> <select id="profile"></select></label>
+    <fieldset><legend data-i18n="s2.actions">Buttons speakers will see</legend><div id="actions"></div></fieldset>
+    <details>
+      <summary data-i18n="s2.advanced">Advanced</summary>
+      <label><span data-i18n="s2.backend">Input method</span> <select id="backend"></select></label>
+      <div class="row">
+        <label class="grow"><span data-i18n="s2.class">Window class / app_id</span> <input id="t-class" maxlength="200"></label>
+        <label class="grow"><span data-i18n="s2.title2">Title contains</span> <input id="t-title" maxlength="200"></label>
+      </div>
+    </details>
+    <div class="nav-row">
+      <button type="button" data-go="1" data-i18n="back">← Back</button>
+      <button type="button" class="primary" id="create" data-i18n="s2.create">Save and create session ▶</button>
+      <button type="button" class="primary" id="save-continue" hidden data-i18n="s2.saveContinue">Save and continue →</button>
+    </div>
+    <p id="creating" class="muted small" hidden data-i18n="s2.creating">Opening the tunnel…</p>
+  </section>
+
+  <!-- 3. Active session -->
+  <section data-panel="3" hidden>
+    <h2 data-i18n="s3.title">Share the session</h2>
+    <ol class="howto">
+      <li data-i18n="s3.h1">Paste the link in the video call chat.</li>
+      <li data-i18n="s3.h2">Tell the password separately (out loud or in a private message).</li>
+      <li data-i18n="s3.h3">Speakers open the link, type their name and the password.</li>
+    </ol>
+    <div class="field big-field"><span class="label" data-i18n="s3.link">Link</span><code id="link"></code><button type="button" id="copy-link" data-i18n="copy">Copy</button></div>
+    <div class="field big-field"><span class="label" data-i18n="s3.password">Password</span><code id="pw">••••••••••••</code>
+      <button type="button" id="reveal" data-i18n="show">Show</button><button type="button" id="copy-pw" data-i18n="copy">Copy</button></div>
+    <p id="conn-info" class="small muted"></p>
+    <p id="conn-warn" class="small warn" role="status"></p>
+    <p class="muted small" id="expires"></p>
+    <details>
+      <summary data-i18n="s3.manage">Manage session</summary>
+      <div class="actions">
+        <button type="button" id="rotate" data-i18n="s3.rotate">Change password (removes everyone)</button>
+        <button type="button" id="end" class="danger" data-i18n="s3.end">End session</button>
+      </div>
+    </details>
+    <div class="nav-row"><button type="button" data-go="2" data-i18n="s3.back">← Target</button><button type="button" class="primary" data-go="4" data-i18n="s3.next">Next: speakers →</button></div>
+  </section>
+
+  <!-- 4. Speakers & activity -->
+  <section data-panel="4" hidden>
+    <h2 data-i18n="s4.title">Speakers</h2>
+    <p class="lead" data-i18n="s4.lead">Names are labels chosen by each person, not verified identities.</p>
+    <table><thead><tr><th data-i18n="s4.name">Name</th><th data-i18n="s4.state">State</th><th data-i18n="s4.conn">Connection</th><th data-i18n="s4.extra">Extra permissions</th><th></th></tr></thead>
+      <tbody id="people"></tbody></table>
+    <h2 data-i18n="s4.activity">Activity</h2>
+    <ol id="history" class="history"></ol>
+    <div class="nav-row"><button type="button" data-go="3" data-i18n="s4.back">← Session</button><span></span></div>
+  </section>
+</main>
+
+<footer class="bottom">
+  <button type="button" id="pause" hidden></button>
+  <button type="button" id="quit" class="danger" data-i18n="quit">Quit Relevo</button>
+</footer>
+</body>
+</html>
