@@ -1,0 +1,62 @@
+name: ci
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "24" }
+      - run: make contracts
+
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - run: go vet ./...
+      - run: CGO_ENABLED=1 go test -race -count=1 ./...
+      # X11/XTEST injection against a disposable Xvfb server (never a desktop).
+      - run: sudo apt-get update && sudo apt-get install -y xvfb
+      - run: |
+          Xvfb :99 -screen 0 800x600x24 & sleep 1
+          RELEVO_TEST_X11_DISPLAY=:99 go test -run TestX11Injection -count=3 -v ./internal/adapter/
+      # Cross-compilation only proves the code compiles (docs/platform-support.md).
+      - run: make cross
+
+  native-build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - run: go vet ./...
+      - run: go test -count=1 ./internal/...
+      - name: build host (macOS with cgo for the tray)
+        if: runner.os == 'macOS'
+        run: CGO_ENABLED=1 go build -o relevo-host ./cmd/host && ./relevo-host backends
+      - name: build host (Windows)
+        if: runner.os == 'Windows'
+        run: go build -o relevo-host.exe ./cmd/host && ./relevo-host.exe backends
+
+  web-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - uses: actions/setup-node@v4
+        with: { node-version: "24" }
+      - run: make web host
+      - run: cd web/controller && npm run e2e
+        env:
+          CHROME: /usr/bin/google-chrome
