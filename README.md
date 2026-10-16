@@ -42,7 +42,7 @@ With Go ≥ 1.26:
 go install github.com/azratul/relevo/cmd/relevo-host@latest
 ```
 
-The scripts download the binary for your system from the [latest release](https://github.com/azratul/relevo/releases/latest), verify its SHA-256 checksum and install it in `~/.local/bin` (`%LOCALAPPDATA%\relevo` on Windows) without root. `RELEVO_VERSION=v0.1.0` installs a specific release and `RELEVO_INSTALL_DIR` changes the directory. Release binaries for macOS include the tray; the ones from `go install` include it too when cgo is available (the default on macOS with Xcode command-line tools).
+The scripts download the binary for your system from the [latest release](https://github.com/azratul/relevo/releases/latest), verify its SHA-256 checksum and install it in `~/.local/bin` (`%LOCALAPPDATA%\relevo` on Windows) without root. They also add **Relevo** to the system's app launcher: an application-menu entry on Linux/FreeBSD (rofi, GNOME, KDE…), `~/Applications/Relevo.app` on macOS (Launchpad, Spotlight) and a Start menu shortcut on Windows (`RELEVO_NO_DESKTOP=1` skips it). Opening Relevo again while it runs just shows its panel. `RELEVO_VERSION=v0.1.0` installs a specific release and `RELEVO_INSTALL_DIR` changes the directory. Release binaries for macOS include the tray; the ones from `go install` include it too when cgo is available (the default on macOS with Xcode command-line tools).
 
 ## Usage
 

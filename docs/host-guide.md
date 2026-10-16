@@ -14,6 +14,23 @@ The scripts verify the SHA-256 checksum of the release archive and install witho
 
 From source: `make web host` (Go ≥ 1.26 and Node ≥ 22) produces `bin/relevo-host`.
 
+The install scripts also register the app (skip with `RELEVO_NO_DESKTOP=1`):
+
+| System | Where it appears | Files |
+|---|---|---|
+| Linux, FreeBSD | Application menu: rofi (`drun`), GNOME, KDE, wofi, fuzzel… | `~/.local/share/applications/relevo.desktop`, icon in `~/.local/share/icons/hicolor/` |
+| macOS | Launchpad and Spotlight; runs in the menu bar without a Dock icon | `~/Applications/Relevo.app` |
+| Windows | Start menu; the console window is detached when started from it | `Relevo.lnk` in the user's Start menu programs, icon `relevo.ico` |
+
+Launchers do not use `PATH`, so these entries point to the binary by absolute path. Opening Relevo again while it is running only shows the running instance's panel.
+
+### Uninstall
+
+- Linux/FreeBSD: `rm ~/.local/bin/relevo-host ~/.local/share/applications/relevo.desktop ~/.local/share/icons/hicolor/*/apps/relevo.*`
+- macOS: `rm -rf ~/.local/bin/relevo-host ~/Applications/Relevo.app`
+- Windows: delete `%LOCALAPPDATA%\relevo` and the "Relevo" Start menu shortcut, and remove that folder from the user `PATH`.
+- Settings live in `~/.config/relevo/` (`%APPDATA%\relevo` on Windows, `~/Library/Application Support/relevo` on macOS).
+
 On Linux, depending on the input backend: Hyprland (`hyprland`), the `wtype` program (`wtype`), an X11 or XWayland session (`x11`), or a portal with RemoteDesktop on GNOME/KDE (`portal`). None of them needs root.
 
 ## How speakers connect

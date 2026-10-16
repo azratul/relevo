@@ -1,6 +1,7 @@
 # Installs relevo-host on Windows from the latest GitHub release.
 #   irm https://raw.githubusercontent.com/azratul/relevo/main/install.ps1 | iex
-# Options: $env:RELEVO_VERSION = "v0.1.0" for a specific release.
+# Options: $env:RELEVO_VERSION = "v0.1.0" for a specific release;
+#          $env:RELEVO_NO_DESKTOP = "1" to skip the Start menu shortcut.
 $ErrorActionPreference = 'Stop'
 $repo = if ($env:RELEVO_REPO) { $env:RELEVO_REPO } else { 'azratul/relevo' }
 $version = if ($env:RELEVO_VERSION) { $env:RELEVO_VERSION } else { 'latest' }
@@ -26,4 +27,17 @@ if (($userPath -split ';') -notcontains $dir) {
   [Environment]::SetEnvironmentVariable('Path', "$userPath;$dir", 'User')
   Write-Host "Added $dir to your PATH (open a new terminal)."
 }
-Write-Host "Installed $(& (Join-Path $dir 'relevo-host.exe') version) to $dir"
+$exe = Join-Path $dir 'relevo-host.exe'
+Write-Host "Installed $(& $exe version) to $dir"
+if (-not $env:RELEVO_NO_DESKTOP) {
+  # Start menu shortcut (per user, no administrator rights needed).
+  $lnk = Join-Path ([Environment]::GetFolderPath('Programs')) 'Relevo.lnk'
+  $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
+  $shortcut.TargetPath = $exe
+  $shortcut.WorkingDirectory = $dir
+  $shortcut.Description = 'Presentation remote for video calls'
+  $ico = Join-Path $dir 'relevo.ico'
+  if (Test-Path $ico) { $shortcut.IconLocation = "$ico,0" }
+  $shortcut.Save()
+  Write-Host "Added Relevo to the Start menu"
+}
