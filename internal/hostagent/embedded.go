@@ -36,7 +36,8 @@ type embedded struct {
 	tunnelErr  string
 	tunnelCode string // tunnel_down | tunnel_failed | link_changed
 	stopping   bool
-	stopped    chan struct{}
+	stopped    chan struct{} // closed when stopping starts (ends the tunnel watcher)
+	finished   chan struct{} // closed when the relay and tunnel are fully down
 }
 
 var errNeedMode = errors.New("choose how speakers will connect (a tunnel or your own URL)")
@@ -61,7 +62,7 @@ func (a *Agent) startEmbedded(ctx context.Context, cn Connection) (*embedded, er
 		return nil, fmt.Errorf("cannot listen on the local port: %w", err)
 	}
 	port := ln.Addr().(*net.TCPAddr).Port
-	e := &embedded{ln: ln, base: "http://" + ln.Addr().String(), createToken: secret.Token("rlvc"), conn: cn, stopped: make(chan struct{})}
+	e := &embedded{ln: ln, base: "http://" + ln.Addr().String(), createToken: secret.Token("rlvc"), conn: cn, stopped: make(chan struct{}), finished: make(chan struct{})}
 	switch cn.Mode {
 	case ModeTunnel:
 		p, err := providerFor(cn)
@@ -201,15 +202,19 @@ func lastLine(s string) string {
 	return s
 }
 
+// stop shuts the relay and tunnel down. It is safe to call concurrently and
+// every caller returns only once the local port is closed.
 func (e *embedded) stop() {
 	e.mu.Lock()
 	if e.stopping {
 		e.mu.Unlock()
+		<-e.finished
 		return
 	}
 	e.stopping = true
 	close(e.stopped)
 	e.mu.Unlock()
+	defer close(e.finished)
 	e.closeTunnel()
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()

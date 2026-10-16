@@ -268,8 +268,16 @@ func (a *Agent) adminCall(ctx context.Context, method, path string, body, out an
 
 // EndSession closes the session on the relay (all credentials die) and stops.
 func (a *Agent) EndSession(ctx context.Context) error {
+	// Hold on to the embedded relay: the connection loop may see
+	// session.closed first and start stopping it in the background.
+	a.mu.Lock()
+	emb := a.emb
+	a.mu.Unlock()
 	err := a.adminCall(ctx, "DELETE", "", nil, nil)
 	a.stopSession("host-ended")
+	if emb != nil {
+		emb.stop() // waits until the local port is closed
+	}
 	return err
 }
 
