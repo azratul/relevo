@@ -26,7 +26,7 @@ CI never injects real key presses except against Xvfb.
 | `go test -race ./...` | PASS |
 | `TestX11Injection` against a nested Xwayland `:97` (`-count=3`) | PASS |
 | `make contracts` | PASS: Redocly clean, AsyncAPI valid (21 messages), 36 schemas in the common subset, 68 examples with the same verdict under draft-07 and 2020-12, schema and error-code coverage |
-| E2E host panel (4-step wizard, EN/ES, real visibility of each step, approval) | 6/6 |
+| E2E host panel (4-step wizard, EN/ES, real visibility of each step, key editor, approval) | 7/7 |
 | E2E Chrome (P2P upgrade, fallback when the P2P channel drops, EN/ES switch) | 15/15 |
 | E2E Firefox (WebDriver BiDi) | 15/15 |
 | E2E Chrome with no P2P route (stays on the tunnel) | 14/14 |

@@ -66,6 +66,30 @@ try {
     assert.match(await page.textContent("#ready"), /Ready/);
   });
 
+  await step("per-action keys: application defaults, Edit captures a shortcut, Default restores it", async () => {
+    const row = () => page.locator(".act", { hasText: "Start presentation" });
+    await page.selectOption("#profile", "google-slides");
+    await row().locator("kbd", { hasText: "Ctrl+F5" }).waitFor({ timeout: 5000 });
+    await row().locator("button", { hasText: "Edit" }).click();
+    await page.focus(".act .capture");
+    await page.keyboard.press("Control+Shift+KeyP");
+    assert.equal(await page.inputValue(".act .capture"), "Ctrl+Shift+P");
+    await page.keyboard.press("F5"); // must not reload the panel
+    assert.equal(await page.inputValue(".act .capture"), "F5");
+    await page.keyboard.press("Alt+Shift+Home");
+    await row().locator("button", { hasText: "Save" }).click();
+    await row().locator("kbd", { hasText: "Alt+Shift+Home" }).waitFor({ timeout: 5000 });
+    await row().locator(".tag", { hasText: "custom" }).waitFor();
+    const cfg = await (await fetch(url.replace(/#.*/, "") + "api/status", { headers: { Authorization: "Bearer " + url.split("#t=")[1] } })).json();
+    assert.deepEqual(cfg.config.bindings, { "presentation.start": ["alt+shift+Home"] });
+    await row().locator("button", { hasText: "Edit" }).click();
+    await row().locator("button", { hasText: "Default (Ctrl+F5)" }).click();
+    await row().locator("kbd", { hasText: "Ctrl+F5" }).waitFor({ timeout: 5000 });
+    assert.equal(await row().locator(".tag").count(), 0);
+    await page.selectOption("#profile", "presentation");
+    await row().locator("kbd", { hasText: "F5" }).waitFor({ timeout: 5000 });
+  });
+
   await step("create session → jumps to step 3 with the link and a hidden password", async () => {
     await page.click("#create");
     await visible(3).waitFor({ timeout: 15000 });

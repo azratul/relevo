@@ -82,3 +82,30 @@ func TestManifestConformsToSchema(t *testing.T) {
 		}
 	}
 }
+
+// Starting the show differs per application and OS (F5 reloads a browser page).
+func TestAppProfilesStartKeys(t *testing.T) {
+	cases := []struct{ goos, profile, want string }{
+		{"linux", "google-slides", "ctrl+F5"}, {"darwin", "google-slides", "super+Return"},
+		{"windows", "powerpoint", "F5"}, {"darwin", "powerpoint", "shift+super+Return"},
+		{"linux", "powerpoint-web", "ctrl+F5"}, {"darwin", "keynote", "alt+super+p"},
+		{"linux", "libreoffice", "F5"}, {"linux", "presentation", "F5"},
+	}
+	for _, c := range cases {
+		r, err := resolveFor(c.goos, c.profile, []string{"presentation.start", "presentation.next"}, nil, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := r.Chords["presentation.start"][0].String(); got != c.want {
+			t.Errorf("%s/%s: start = %s, want %s", c.goos, c.profile, got, c.want)
+		}
+		if got := r.Chords["presentation.next"][0].String(); got != "Right" {
+			t.Errorf("%s/%s: next = %s", c.goos, c.profile, got)
+		}
+	}
+	// A user binding still wins over the profile.
+	r, _ := resolveFor("linux", "google-slides", []string{"presentation.start"}, map[string][]string{"presentation.start": {"F5"}}, nil)
+	if r.Chords["presentation.start"][0].Key != "F5" || len(r.Chords["presentation.start"][0].Mods) != 0 {
+		t.Fatal("user binding ignored")
+	}
+}

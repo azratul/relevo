@@ -3,6 +3,7 @@ package adapter
 import (
 	"encoding/json"
 	"fmt"
+	"runtime"
 	"slices"
 	"strconv"
 
@@ -49,24 +50,68 @@ func BuiltinActions() []ActionDef {
 				}
 				return append(keys, "Return"), nil
 			}},
-		{ID: "presentation.start", Title: "Start presentation", Description: "F5", Capability: "presentation.control", Parameters: noParams, Keys: []string{"F5"}},
-		{ID: "presentation.stop", Title: "Exit presentation", Description: "Escape", Capability: "presentation.control", Parameters: noParams, Keys: []string{"Escape"}},
+		{ID: "presentation.start", Title: "Start presentation", Description: "Start the slideshow", Capability: "presentation.control", Parameters: noParams, Keys: []string{"F5"}},
+		{ID: "presentation.stop", Title: "Exit presentation", Description: "Leave the slideshow", Capability: "presentation.control", Parameters: noParams, Keys: []string{"Escape"}},
 	}
 }
 
-// Profiles: named defaults (enabled actions and key overrides).
+// Profiles: named defaults (enabled actions and key overrides). Applications
+// disagree mostly on how to start the show: F5 reloads the page in a browser,
+// so web apps use other shortcuts. Darwin overrides apply on macOS (super = ⌘).
+//
+// Sources: Google Slides https://support.google.com/docs/answer/1696717,
+// PowerPoint https://support.microsoft.com/office/1524ffce-bd2a-45f4-9a7f-f18b992b93a0
 type Profile struct {
 	Name     string
 	Actions  []string
 	Bindings map[string][]string
+	Darwin   map[string][]string
 }
+
+var defaultActions = []string{"presentation.next", "presentation.previous"}
 
 func Profiles() map[string]Profile {
 	return map[string]Profile{
-		"presentation":         {Name: "Presentation (arrow keys)", Actions: []string{"presentation.next", "presentation.previous"}},
-		"presentation-clicker": {Name: "Presentation (Page Up/Down, like a clicker)", Actions: []string{"presentation.next", "presentation.previous"}, Bindings: map[string][]string{"presentation.next": {"Page_Down"}, "presentation.previous": {"Page_Up"}}},
-		"presentation-full":    {Name: "Presentation (all actions)", Actions: []string{"presentation.next", "presentation.previous", "presentation.first", "presentation.last", "presentation.blank", "presentation.goto"}},
+		"presentation":         {Name: "Generic (arrow keys, F5 to start)", Actions: defaultActions},
+		"presentation-clicker": {Name: "Generic (Page Up/Down, like a clicker)", Actions: defaultActions, Bindings: map[string][]string{"presentation.next": {"Page_Down"}, "presentation.previous": {"Page_Up"}}},
+		"presentation-full":    {Name: "Generic (all actions)", Actions: []string{"presentation.next", "presentation.previous", "presentation.first", "presentation.last", "presentation.blank", "presentation.goto"}},
+		"google-slides": {Name: "Google Slides", Actions: defaultActions,
+			Bindings: map[string][]string{"presentation.start": {"ctrl+F5"}},
+			Darwin:   map[string][]string{"presentation.start": {"super+Return"}}},
+		"powerpoint": {Name: "PowerPoint (desktop)", Actions: defaultActions,
+			Bindings: map[string][]string{"presentation.start": {"F5"}},
+			Darwin:   map[string][]string{"presentation.start": {"super+shift+Return"}}},
+		"powerpoint-web": {Name: "PowerPoint for the web", Actions: defaultActions,
+			Bindings: map[string][]string{"presentation.start": {"ctrl+F5"}},
+			Darwin:   map[string][]string{"presentation.start": {"super+shift+Return"}}},
+		"keynote": {Name: "Keynote (macOS)", Actions: defaultActions,
+			Darwin: map[string][]string{"presentation.start": {"alt+super+p"}}},
+		"libreoffice": {Name: "LibreOffice Impress", Actions: defaultActions,
+			Bindings: map[string][]string{"presentation.start": {"F5"}}},
 	}
+}
+
+// DefaultKeys returns the keys each parameterless builtin action gets from a
+// profile on this OS, before the host's own bindings.
+func DefaultKeys(profile string) map[string][]string { return defaultKeysFor(runtime.GOOS, profile) }
+
+func defaultKeysFor(goos, profile string) map[string][]string {
+	prof := Profiles()[profile]
+	out := map[string][]string{}
+	for _, d := range BuiltinActions() {
+		if d.Expand != nil {
+			continue
+		}
+		keys := d.Keys
+		if b, ok := prof.Bindings[d.ID]; ok {
+			keys = b
+		}
+		if b, ok := prof.Darwin[d.ID]; ok && goos == "darwin" {
+			keys = b
+		}
+		out[d.ID] = keys
+	}
+	return out
 }
 
 // CustomAction is a host-defined action from the local config.
@@ -88,6 +133,10 @@ type Resolved struct {
 // Resolve applies a profile, enabled list, bindings and custom actions.
 // Every key is validated against the whitelist.
 func Resolve(profile string, enabled []string, bindings map[string][]string, custom []CustomAction) (*Resolved, error) {
+	return resolveFor(runtime.GOOS, profile, enabled, bindings, custom)
+}
+
+func resolveFor(goos, profile string, enabled []string, bindings map[string][]string, custom []CustomAction) (*Resolved, error) {
 	prof, ok := Profiles()[profile]
 	if !ok {
 		return nil, fmt.Errorf("unknown profile %q", profile)
@@ -112,6 +161,7 @@ func Resolve(profile string, enabled []string, bindings map[string][]string, cus
 			enabled = append(slices.Clone(enabled), c.ID)
 		}
 	}
+	defaults := defaultKeysFor(goos, profile)
 	r := &Resolved{Defs: map[string]ActionDef{}, Chords: map[string][]Chord{}}
 	for _, id := range enabled {
 		d, ok := all[id]
@@ -119,7 +169,7 @@ func Resolve(profile string, enabled []string, bindings map[string][]string, cus
 			return nil, fmt.Errorf("unknown action %q", id)
 		}
 		keys := d.Keys
-		if b, ok := prof.Bindings[id]; ok {
+		if b, ok := defaults[id]; ok {
 			keys = b
 		}
 		if b, ok := bindings[id]; ok {

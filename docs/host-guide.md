@@ -75,7 +75,7 @@ English by default. The **EN / ES** switch in the panel changes the panel, the t
 The panel is a 4-step guide; only one step is visible at a time and the bar at the top shows where you are, what is done and what is still locked:
 
 1. **Session**: how speakers will connect (tunnel) and options (manual approval, your own password).
-2. **Target & actions**: the presentation window (saved as soon as you pick it), the keys, and the buttons speakers will see. "Save and create session" opens the tunnel and moves to step 3.
+2. **Target & actions**: the presentation window (saved as soon as you pick it), the application (which sets the default keys), and the buttons speakers will see. Each button shows the keys it presses; **Edit** captures another shortcut by pressing it, and **Default** goes back to the application's keys. A few shortcuts the browser keeps for itself (like Ctrl+W) cannot be captured; put those in `bindings`. "Save and create session" opens the tunnel and moves to step 3.
 3. **Active session**: link and password to share, connection status, change password or end the session.
 4. **Speakers & activity**: approve, disable or remove speakers and see every command. A counter on step 4 shows speakers waiting for approval.
 
@@ -104,6 +104,18 @@ The panel is a 4-step guide; only one step is visible at a time and the bar at t
 ```
 
 - `connection.mode`: `ask` (ask when creating the session, the default), `tunnel`, or `url` (your own tunnel, with `publicUrl` and `localPort`). Everything changes without rebuilding: the file, the panel or `--tunnel`.
+- `profile`: the presentation application, which decides the default keys. Most actions use the arrow keys everywhere; starting the show differs, because F5 reloads the page in a browser:
+
+  | Profile | Start (Windows/Linux) | Start (macOS) |
+  |---|---|---|
+  | `google-slides` | Ctrl+F5 | ⌘+Return |
+  | `powerpoint` (desktop) | F5 | ⌘+Shift+Return |
+  | `powerpoint-web` | Ctrl+F5 | ⌘+Shift+Return |
+  | `keynote` | — | ⌥+⌘+P |
+  | `libreoffice` | F5 | F5 |
+  | `presentation`, `presentation-clicker`, `presentation-full` (generic) | F5 | F5 |
+
+  `bindings` (what **Edit** in the panel writes) overrides any of them.
 - Keys can only come from the whitelist ([platform support](platform-support.md#keys)). Speakers never send keys.
 - `allowUnverifiedActiveWindow`: for backends that cannot check focus (portal; wtype outside Hyprland). With it, commands go to **whichever window has focus**. Use it only if you accept that risk.
 - The password and the host token are never written to disk.

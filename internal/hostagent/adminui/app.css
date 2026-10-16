@@ -44,7 +44,11 @@ code { background:var(--bg); padding:3px 6px; border-radius:5px; word-break:brea
 .tag { font-size:11px; padding:0 6px; border-radius:999px; border:1px solid currentColor; margin-left:6px; }
 table { width:100%; border-collapse:collapse; } td, th { text-align:left; padding:6px 4px; border-bottom:1px solid var(--line); vertical-align:middle; }
 td button { padding:4px 8px; margin:1px; }
-fieldset { border:1px solid var(--line); border-radius:8px; } #actions { display:grid; gap:4px; }
+fieldset { border:1px solid var(--line); border-radius:8px; } fieldset > p { margin:0 0 6px; } #actions { display:grid; }
+.act { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:5px 0; border-bottom:1px solid var(--line); } .act:last-child { border-bottom:0; }
+.act > label { display:flex; gap:8px; align-items:center; flex:1; min-width:170px; }
+.act button { padding:3px 10px; font-size:13px; } .act .capture { width:170px; padding:4px 8px; } .act .tag { margin-left:0; }
+kbd { font:13px ui-monospace, monospace; padding:2px 7px; border:1px solid var(--line); border-bottom-width:2px; border-radius:5px; background:var(--bg); }
 .history { margin:0; padding-left:20px; font-size:13px; max-height:260px; overflow:auto; }
 .flash { padding:8px 12px; border-radius:7px; background:var(--card); border:1px solid var(--bad); color:var(--bad); margin:0 0 12px; }
 .bottom { max-width:860px; margin:0 auto; padding:0 16px 24px; display:flex; justify-content:space-between; }

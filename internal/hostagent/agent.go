@@ -722,10 +722,22 @@ type Status struct {
 	Config       Config                      `json:"config"`
 	History      []HistoryEntry              `json:"history"`
 	Profiles     map[string]string           `json:"profiles"`
-	AllActions   []map[string]string         `json:"allActions"`
+	AllActions   []ActionInfo                `json:"allActions"`
 	Permissions  []string                    `json:"permissions"`
 	Connection   *ConnectionStatus           `json:"connection,omitempty"`
 	Tunnels      []tunnel.Info               `json:"tunnels"`
+}
+
+// ActionInfo describes a builtin action for the panel, with the keys it sends
+// on this computer (profile defaults, then the host's own bindings).
+type ActionInfo struct {
+	ID          string   `json:"id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Capability  string   `json:"capability"`
+	Keys        []string `json:"keys,omitempty"`
+	DefaultKeys []string `json:"defaultKeys,omitempty"`
+	Custom      bool     `json:"custom,omitempty"`
 }
 
 // PublicSession omits the host token; the password is only revealed on demand.
@@ -748,8 +760,13 @@ func (a *Agent) Status() Status {
 	for k, p := range adapter.Profiles() {
 		st.Profiles[k] = p.Name
 	}
+	defaults := adapter.DefaultKeys(a.cfg.Profile)
 	for _, d := range adapter.BuiltinActions() {
-		st.AllActions = append(st.AllActions, map[string]string{"id": d.ID, "title": d.Title, "description": d.Description, "capability": d.Capability})
+		ai := ActionInfo{ID: d.ID, Title: d.Title, Description: d.Description, Capability: d.Capability, DefaultKeys: defaults[d.ID], Keys: defaults[d.ID]}
+		if b, ok := a.cfg.Bindings[d.ID]; ok && d.Expand == nil {
+			ai.Keys, ai.Custom = b, true
+		}
+		st.AllActions = append(st.AllActions, ai)
 	}
 	if a.sess != nil {
 		st.Session = &PublicSession{ID: a.sess.ID, JoinURL: a.sess.JoinURL, ExpiresAt: a.sess.ExpiresAt}

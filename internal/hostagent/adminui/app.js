@@ -32,7 +32,11 @@ const I18N = {
     "s2.lead": "Open your presentation, then pick its window here. Relevo only sends the allowed keys to that window.",
     "s2.window": "Presentation window", "s2.pick": "— choose —", "s2.refresh": "Refresh list",
     "s2.unverified": "Send to the active window without checking focus (risk: keys may reach another application)",
-    "s2.profile": "Keys", "s2.actions": "Buttons speakers will see", "s2.advanced": "Advanced", "s2.backend": "Input method",
+    "s2.profile": "Application (default keys)",
+    "s2.keysHint": "Each button presses these keys in the presentation window on this computer. Use Edit if your application or system uses another shortcut.",
+    "s2.edit": "Edit", "s2.editAria": "Edit keys for {a}", "s2.press": "Press the shortcut…", "s2.saveKey": "Save", "s2.defaultKey": "Default ({k})", "s2.cancel": "Cancel",
+    "s2.customKey": "custom", "s2.keyBad": "That key is not allowed", "s2.gotoKeys": "number + Enter",
+    "s2.reserved": "The browser keeps some shortcuts for itself (like Ctrl+W); set those in host.json.", "s2.actions": "Buttons speakers will see", "s2.advanced": "Advanced", "s2.backend": "Input method",
     "s2.class": "Window class / app_id", "s2.title2": "Title contains", "s2.create": "Save and create session ▶",
     "s2.saveContinue": "Save and continue →", "s2.creating": "Opening the tunnel…",
     "s2.ready": "✔ Ready: {t}", "s2.notReady": "✖ Not ready: {r}", "s2.confirmNotReady": "The presentation window is not ready ({r}). Create the session anyway?",
@@ -61,7 +65,8 @@ const I18N = {
     "reason.accessibility_permission": "grant the Accessibility permission to relevo-host (System Settings → Privacy & Security → Accessibility)",
     "reason.no_focus_info": "the window manager does not report the focused window",
     "warn.tunnel_down": "The tunnel went down; reconnecting…", "warn.tunnel_failed": "Could not reopen the tunnel; retrying…", "warn.link_changed": "The link changed: share the new one",
-    "profile.presentation": "Arrow keys (← →)", "profile.presentation-clicker": "Page Up / Page Down (like a clicker)", "profile.presentation-full": "All actions",
+    "profile.presentation": "Other (arrow keys, F5 to start)", "profile.presentation-clicker": "Other (Page Up / Page Down, like a clicker)", "profile.presentation-full": "Other (all actions)",
+    "profile.google-slides": "Google Slides", "profile.powerpoint": "PowerPoint (desktop)", "profile.powerpoint-web": "PowerPoint for the web", "profile.keynote": "Keynote (macOS)", "profile.libreoffice": "LibreOffice Impress",
     "action.presentation.next": "Next", "action.presentation.previous": "Previous", "action.presentation.first": "First slide", "action.presentation.last": "Last slide",
     "action.presentation.blank": "Black screen", "action.presentation.goto": "Go to slide", "action.presentation.start": "Start presentation", "action.presentation.stop": "Exit presentation",
   },
@@ -87,7 +92,11 @@ const I18N = {
     "s2.lead": "Abre tu presentación y elige aquí su ventana. Relevo solo envía las teclas permitidas a esa ventana.",
     "s2.window": "Ventana de la presentación", "s2.pick": "— elegir —", "s2.refresh": "Actualizar lista",
     "s2.unverified": "Enviar a la ventana activa sin verificar el foco (riesgo: las teclas pueden llegar a otra aplicación)",
-    "s2.profile": "Teclas", "s2.actions": "Botones que verán los relatores", "s2.advanced": "Avanzado", "s2.backend": "Método de entrada",
+    "s2.profile": "Aplicación (teclas predeterminadas)",
+    "s2.keysHint": "Cada botón pulsa estas teclas en la ventana de la presentación en este computador. Usa Editar si tu aplicación o sistema usa otro atajo.",
+    "s2.edit": "Editar", "s2.editAria": "Editar teclas de {a}", "s2.press": "Pulsa el atajo…", "s2.saveKey": "Guardar", "s2.defaultKey": "Predeterminada ({k})", "s2.cancel": "Cancelar",
+    "s2.customKey": "personalizada", "s2.keyBad": "Esa tecla no está permitida", "s2.gotoKeys": "número + Enter",
+    "s2.reserved": "El navegador se reserva algunos atajos (como Ctrl+W); configúralos en host.json.", "s2.actions": "Botones que verán los relatores", "s2.advanced": "Avanzado", "s2.backend": "Método de entrada",
     "s2.class": "Clase de ventana / app_id", "s2.title2": "El título contiene", "s2.create": "Guardar y crear sesión ▶",
     "s2.saveContinue": "Guardar y continuar →", "s2.creating": "Abriendo el túnel…",
     "s2.ready": "✔ Listo: {t}", "s2.notReady": "✖ No listo: {r}", "s2.confirmNotReady": "La ventana de la presentación no está lista ({r}). ¿Crear la sesión de todos modos?",
@@ -116,7 +125,8 @@ const I18N = {
     "reason.accessibility_permission": "concede el permiso de Accesibilidad a relevo-host (Ajustes del Sistema → Privacidad y seguridad → Accesibilidad)",
     "reason.no_focus_info": "el gestor de ventanas no informa de la ventana con foco",
     "warn.tunnel_down": "El túnel se cayó; reconectando…", "warn.tunnel_failed": "No se pudo reabrir el túnel; reintentando…", "warn.link_changed": "El enlace cambió: comparte el nuevo",
-    "profile.presentation": "Flechas (← →)", "profile.presentation-clicker": "Re Pág / Av Pág (como un clicker)", "profile.presentation-full": "Todas las acciones",
+    "profile.presentation": "Otra (flechas, F5 para comenzar)", "profile.presentation-clicker": "Otra (Re Pág / Av Pág, como un clicker)", "profile.presentation-full": "Otra (todas las acciones)",
+    "profile.google-slides": "Presentaciones de Google", "profile.powerpoint": "PowerPoint (escritorio)", "profile.powerpoint-web": "PowerPoint para la web", "profile.keynote": "Keynote (macOS)", "profile.libreoffice": "LibreOffice Impress",
     "action.presentation.next": "Siguiente", "action.presentation.previous": "Anterior", "action.presentation.first": "Primera diapositiva", "action.presentation.last": "Última diapositiva",
     "action.presentation.blank": "Pantalla negra", "action.presentation.goto": "Ir a diapositiva", "action.presentation.start": "Iniciar presentación", "action.presentation.stop": "Salir de la presentación",
   },
@@ -254,10 +264,70 @@ function buildSettings(s) {
   $("t-class").value = s.config.target.class || ""; $("t-title").value = s.config.target.titleContains || "";
   $("t-unverified").checked = !!s.config.target.allowUnverifiedActiveWindow;
   $("unverified-row").hidden = s.target.focusCheck !== "unverified" && !s.config.target.allowUnverifiedActiveWindow;
-  const p = $("profile"); p.replaceChildren(...Object.entries(s.profiles).map(([k, v]) => { const o = el("option", tOr("profile." + k, v)); o.value = k; return o; })); p.value = s.config.profile;
+  const p = $("profile"); p.replaceChildren(...Object.entries(s.profiles).sort(([a], [b]) => a.startsWith("presentation") - b.startsWith("presentation") || a.localeCompare(b)).map(([k, v]) => { const o = el("option", tOr("profile." + k, v)); o.value = k; return o; })); p.value = s.config.profile;
   const enabled = new Set(s.catalog.map((a) => a.id));
-  $("actions").replaceChildren(...s.allActions.map((a) => { const l = el("label"); l.className = "row"; const c = el("input"); c.type = "checkbox"; c.value = a.id; c.checked = enabled.has(a.id); l.append(c, el("span", actionTitle(a))); return l; }));
+  bindings = { ...(s.config.bindings || {}) };
+  $("actions").replaceChildren(...s.allActions.map((a) => actionRow(a, enabled.has(a.id))));
   syncWindowSelect();
+}
+
+// ---------- per-action keys ----------
+// Chords use the host's whitelist names ("ctrl+F5", "super+shift+Return"); the
+// server validates them, so the panel only helps to type them.
+let bindings = {};
+const PLAT = navigator.userAgentData?.platform || navigator.platform || "";
+const MAC = /mac|iphone|ipad/i.test(PLAT);
+const MOD_LABEL = MAC ? { ctrl: "⌃", alt: "⌥", shift: "⇧", super: "⌘" } : { ctrl: "Ctrl", alt: "Alt", shift: "Shift", super: /win/i.test(PLAT) ? "Win" : "Super" };
+const KEY_LABEL = { Left: "←", Right: "→", Up: "↑", Down: "↓", Page_Up: "PgUp", Page_Down: "PgDn", Return: MAC ? "Return" : "Enter", Escape: "Esc", BackSpace: "Backspace", space: "Space", period: "." };
+const fmtChord = (c) => c.split("+").map((p, i, a) => (i < a.length - 1 ? MOD_LABEL[p] || p : KEY_LABEL[p] || (p.length === 1 ? p.toUpperCase() : p))).join(MAC ? "" : "+");
+const fmtKeys = (ks) => (ks || []).map(fmtChord).join(", ");
+const CODE_KEY = { ArrowLeft: "Left", ArrowRight: "Right", ArrowUp: "Up", ArrowDown: "Down", PageUp: "Page_Up", PageDown: "Page_Down", Home: "Home", End: "End",
+  Space: "space", Enter: "Return", NumpadEnter: "Return", Escape: "Escape", Backspace: "BackSpace", Period: "period", NumpadDecimal: "period" };
+function keyFromEvent(e) {
+  const c = e.code;
+  if (/^Key[A-Z]$/.test(c)) return /^[a-z]$/i.test(e.key) ? e.key.toLowerCase() : c.slice(3).toLowerCase(); // the layout's letter when it has one
+  if (/^(Digit|Numpad)[0-9]$/.test(c)) return c.slice(-1);
+  if (/^F([1-9]|1[0-2])$/.test(c)) return c;
+  return CODE_KEY[c];
+}
+const modsOf = (e) => [e.ctrlKey && "ctrl", e.altKey && "alt", e.shiftKey && "shift", e.metaKey && "super"].filter(Boolean);
+
+function actionRow(a, checked) {
+  const row = el("div"); row.className = "act";
+  const l = el("label"); const c = el("input"); c.type = "checkbox"; c.value = a.id; c.checked = checked; l.append(c, el("span", actionTitle(a)));
+  row.append(l);
+  if (!a.keys) { row.append(el("span", t("s2.gotoKeys"), "muted small")); return row; }
+  const keys = el("kbd", fmtKeys(a.keys));
+  const edit = el("button", t("s2.edit")); edit.type = "button"; edit.setAttribute("aria-label", t("s2.editAria", { a: actionTitle(a) }));
+  row.append(keys);
+  if (a.custom) row.append(el("span", t("s2.customKey"), "tag muted"));
+  row.append(edit);
+  edit.onclick = () => {
+    editing = true;
+    let chord = "";
+    const cap = el("input"); cap.className = "capture"; cap.readOnly = true; cap.placeholder = t("s2.press"); cap.setAttribute("aria-label", t("s2.editAria", { a: actionTitle(a) }));
+    const save = el("button", t("s2.saveKey"), "primary"); save.type = "button"; save.disabled = true;
+    const def = el("button", t("s2.defaultKey", { k: fmtKeys(a.defaultKeys) })); def.type = "button";
+    const cancel = el("button", t("s2.cancel")); cancel.type = "button";
+    const msg = el("span", t("s2.reserved"), "muted small");
+    cap.onkeydown = (e) => {
+      if (e.key === "Tab" && !e.ctrlKey && !e.altKey && !e.metaKey) return; // keep keyboard navigation
+      e.preventDefault(); e.stopPropagation();
+      if (e.repeat) return;
+      if (["Control", "Alt", "Shift", "Meta", "AltGraph"].includes(e.key)) { cap.value = modsOf(e).map((m) => MOD_LABEL[m]).join(MAC ? "" : "+") + (MAC ? "…" : "+…"); return; }
+      const k = keyFromEvent(e);
+      if (!k) { chord = ""; save.disabled = true; cap.value = ""; msg.textContent = t("s2.keyBad"); msg.className = "bad small"; return; }
+      chord = [...modsOf(e), k].join("+"); cap.value = fmtChord(chord); save.disabled = false;
+      msg.textContent = t("s2.reserved"); msg.className = "muted small";
+    };
+    const done = (fn) => act(async () => { fn(); await saveSettings(); });
+    save.onclick = () => done(() => { if (a.defaultKeys?.length === 1 && a.defaultKeys[0] === chord) delete bindings[a.id]; else bindings[a.id] = [chord]; });
+    def.onclick = () => done(() => delete bindings[a.id]);
+    cancel.onclick = () => { editing = false; settingsBuilt = false; render(); };
+    row.replaceChildren(l, cap, save, def, cancel, msg);
+    cap.focus();
+  };
+  return row;
 }
 
 let windows = [];
@@ -279,7 +349,7 @@ function syncWindowSelect() {
 
 async function saveSettings() {
   const actions = [...$("actions").querySelectorAll("input:checked")].map((c) => c.value);
-  await api("PUT", "/api/settings", { ...st.config, language: lang, requireApproval: $("approval").checked, backend: $("backend").value, profile: $("profile").value, actions,
+  await api("PUT", "/api/settings", { ...st.config, language: lang, requireApproval: $("approval").checked, backend: $("backend").value, profile: $("profile").value, actions, bindings,
     target: { class: $("t-class").value.trim(), titleContains: $("t-title").value.trim(), allowUnverifiedActiveWindow: $("t-unverified").checked } });
   editing = false; settingsBuilt = false;
 }
