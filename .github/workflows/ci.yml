@@ -23,8 +23,6 @@ jobs:
       - run: go vet ./...
       - run: CGO_ENABLED=1 go test -race -count=1 ./...
       - run: go install ./cmd/relevo-host && relevo-host version
-      # Icons in assets/icons are generated from internal/icon.
-      - run: go run ./tools/icons && git diff --exit-code -- assets/icons
       # X11/XTEST injection against a disposable Xvfb server (never a desktop).
       - run: sudo apt-get update && sudo apt-get install -y xvfb
       - run: |

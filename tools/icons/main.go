@@ -1,6 +1,8 @@
-// Command icons writes the generated icon files to assets/icons:
+// Command icons writes the generated icon files (SVG, PNG, ICO, ICNS) to a
+// directory. The release build calls it; the files are not committed because
+// PNG compression output differs between Go versions.
 //
-//	go run ./tools/icons
+//	go run ./tools/icons OUTPUT_DIR
 package main
 
 import (
@@ -12,7 +14,10 @@ import (
 )
 
 func main() {
-	dir := filepath.Join("assets", "icons")
+	if len(os.Args) != 2 {
+		log.Fatal("usage: icons OUTPUT_DIR")
+	}
+	dir := os.Args[1]
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		log.Fatal(err)
 	}

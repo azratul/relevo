@@ -11,6 +11,10 @@ VERSION=${1:?version}; shift
 OUT=dist/release
 mkdir -p "$OUT"
 export CGO_ENABLED=${CGO_ENABLED:-0}
+# Icons for the install scripts, generated from internal/icon (not committed).
+icons=$(mktemp -d)
+trap 'rm -rf "$icons"' EXIT
+CGO_ENABLED=0 go run ./tools/icons "$icons"
 for target in "$@"; do
   os=${target%/*}; arch=${target#*/}
   name=relevo-host_${os}_${arch}
@@ -24,7 +28,7 @@ for target in "$@"; do
     darwin) extra="relevo.icns" ;;
     *) extra="relevo.png relevo.svg" ;;
   esac
-  for f in $extra; do cp "assets/icons/$f" "$work/"; done
+  for f in $extra; do cp "$icons/$f" "$work/"; done
   if [ "$os" = windows ]; then
     (cd "$work" && python3 -c 'import sys,zipfile; z=zipfile.ZipFile(sys.argv[1],"w",zipfile.ZIP_DEFLATED); [z.write(f) for f in sys.argv[2:]]' "$OLDPWD/$OUT/$name.zip" "$exe" LICENSE README.md $extra)
   else
