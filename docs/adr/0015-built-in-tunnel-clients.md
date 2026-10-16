@@ -10,7 +10,7 @@ Running a single binary must be enough. Requiring `ssh`, `bore` or other program
 - The SSH client never uses the user's keys or agent; the server's host key is pinned on first use in Relevo's own `known_hosts` (a changed key of the same type is refused).
 - **bore.pub** uses a built-in implementation of the bore protocol (NUL-delimited JSON on control port 7835). It is plain TCP: the public URL is `http://`, so it is offered only with explicit consent.
 - cloudflared, ngrok and Tailscale Funnel keep launching their own programs; a custom command covers other services.
-- serveo is listed first (HTTPS and client IP); bore last.
+- localhost.run is listed first and is the default (HTTPS, no warning page for speakers); serveo next (HTTPS and client IP, but a warning page); bore last.
 
 ## Consequences
 `relevo-host` works with an empty `PATH`: verified end to end through serveo, localhost.run and bore.pub.

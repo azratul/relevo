@@ -47,15 +47,15 @@ The scripts download the binary for your system from the [latest release](https:
 ## Usage
 
 ```sh
-relevo-host                           # opens the panel: pick a tunnel (serveo by default) and create the session
+relevo-host                           # opens the panel: pick a tunnel (localhost.run by default) and create the session
 ```
 
-Nothing else needs to be installed: serveo.net, localhost.run and bore.pub are built into the binary. The panel guides you in four steps: **Session** (how speakers connect) → **Target & actions** (the presentation window) → **Active session** (link and password to share) → **Speakers & activity**.
+Nothing else needs to be installed: localhost.run, serveo.net and bore.pub are built into the binary. The panel guides you in four steps: **Session** (how speakers connect) → **Target & actions** (the presentation window) → **Active session** (link and password to share) → **Speakers & activity**.
 
 Without the graphical panel:
 
 ```sh
-relevo-host --tunnel serveo --start        # or localhost.run, bore; ngrok/cloudflared/tailscale if installed
+relevo-host --tunnel localhost.run --start # or serveo, bore; ngrok/cloudflared/tailscale if installed
 relevo-host --start                        # asks in the terminal which tunnel to use
 relevo-host --tunnel url:https://my.domain --local-port 8787 --start   # your own tunnel/proxy
 ```

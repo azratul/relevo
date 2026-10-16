@@ -39,8 +39,8 @@ There is no Relevo server: `relevo-host` runs the relay itself and publishes it 
 
 | Option | Needs | HTTPS | Speaker IP | Notes (checked 2026-10-16) |
 |---|---|---|---|---|
-| `serveo` | nothing (built in) | yes | yes | tested; **default**; speakers accept a warning page once |
-| `localhost.run` | nothing (built in) | yes | **no** | tested; no warning page |
+| `localhost.run` | nothing (built in) | yes | **no** | tested; **default**; no warning page |
+| `serveo` | nothing (built in) | yes | yes | tested; speakers accept a warning page once |
 | `cloudflared` | the `cloudflared` program | yes | yes | `trycloudflare.com` quick tunnel, no account; not tested here |
 | `ngrok` | `ngrok` + authtoken | yes | yes | tested; the free plan shows a warning page (one click) |
 | `tailscale` | Tailscale with Funnel | yes | — | not tested here |
@@ -64,7 +64,7 @@ relevo-host check                  # ready? (permissions, target)
 relevo-host                        # tray + local panel
 ```
 
-On start the **local panel** opens in the browser (`http://127.0.0.1:<port>/#t=<key>`, reachable only from your computer; the key travels in the URL fragment and is never sent to a server). From the tray: "Open panel", "Pause/Resume control", "End session", "Quit". If your desktop has no tray, Relevo detects it, opens the panel and stays in the terminal (Ctrl+C ends the session and quits). Headless: `relevo-host --tunnel serveo --no-tray --no-browser --start` prints the link and password.
+On start the **local panel** opens in the browser (`http://127.0.0.1:<port>/#t=<key>`, reachable only from your computer; the key travels in the URL fragment and is never sent to a server). From the tray: "Open panel", "Pause/Resume control", "End session", "Quit". If your desktop has no tray, Relevo detects it, opens the panel and stays in the terminal (Ctrl+C ends the session and quits). Headless: `relevo-host --tunnel localhost.run --no-tray --no-browser --start` prints the link and password.
 
 ## Language
 
@@ -89,7 +89,7 @@ The panel is a 4-step guide; only one step is visible at a time and the bar at t
 
 ```json
 {
-  "connection": { "mode": "tunnel", "tunnel": "serveo", "webrtc": true,
+  "connection": { "mode": "tunnel", "tunnel": "localhost.run", "webrtc": true,
                   "stunServers": ["stun:stun.l.google.com:19302", "stun:stun.cloudflare.com:3478"] },
   "backend": "auto",
   "target": { "class": "org.pwmt.zathura", "titleContains": "", "allowUnverifiedActiveWindow": false },

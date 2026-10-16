@@ -37,7 +37,7 @@ try {
     assert.equal(await page.locator('[data-step="1"]').getAttribute("aria-current"), "step");
     assert.ok(await page.locator('[data-step="3"]').isDisabled());
     assert.ok(await page.locator('[data-step="4"]').isDisabled());
-    assert.equal(await page.locator("input[name=mode]:checked").getAttribute("value"), "tunnel:serveo"); // recommended default
+    assert.equal(await page.locator("input[name=mode]:checked").getAttribute("value"), "tunnel:localhost.run"); // recommended default
     await onlyStep(1);
     assert.equal(await page.locator("#relay-fields").isVisible(), false);
     assert.equal(await page.locator("#insecure-row").isVisible(), false);
