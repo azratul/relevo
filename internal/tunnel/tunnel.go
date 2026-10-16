@@ -207,6 +207,9 @@ func Start(ctx context.Context, p Provider, localPort int, allowInsecure bool, t
 	cmd := exec.Command(bin, p.args(localPort)...)
 	cmd.Stdin = nil // /dev/null: never prompt
 	setProcAttrs(cmd)
+	// If a descendant outside the process group keeps the output pipe open,
+	// Wait still returns shortly after the client itself exits.
+	cmd.WaitDelay = 2 * time.Second
 	pr, pw := io.Pipe()
 	cmd.Stdout, cmd.Stderr = pw, pw
 	if err := cmd.Start(); err != nil {
@@ -214,7 +217,9 @@ func Start(ctx context.Context, p Provider, localPort int, allowInsecure bool, t
 	}
 	t := &Tunnel{Provider: p, cmd: cmd, done: make(chan struct{})}
 	found := make(chan string, 1)
+	readerDone := make(chan struct{})
 	go func() {
+		defer close(readerDone)
 		sc := bufio.NewScanner(pr)
 		sc.Buffer(make([]byte, 64*1024), 1024*1024)
 		sent := false
@@ -240,6 +245,7 @@ func Start(ctx context.Context, p Provider, localPort int, allowInsecure bool, t
 	go func() {
 		t.err = cmd.Wait()
 		pw.Close()
+		<-readerDone // every output line is recorded before Done fires
 		close(t.done)
 	}()
 	select {
@@ -278,8 +284,8 @@ func (t *Tunnel) Close() {
 		terminate(t.cmd)
 		select {
 		case <-t.done:
-		case <-time.After(3 * time.Second):
-			_ = t.cmd.Process.Kill()
+		case <-time.After(time.Second):
+			kill(t.cmd)
 			<-t.done
 		}
 	}

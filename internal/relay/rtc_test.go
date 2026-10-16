@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pion/ice/v4"
 	"github.com/pion/webrtc/v4"
 
 	"relevo/internal/protocol"
@@ -23,7 +24,11 @@ type rtcPeer struct {
 
 func (e *env) rtcConnect(t *testing.T, sid, token string, ordered bool) (*rtcPeer, int) {
 	t.Helper()
-	pc, err := webrtc.NewPeerConnection(webrtc.Configuration{})
+	// The peer cannot use mDNS, as on macOS where mDNSResponder owns port
+	// 5353: the relay must offer candidates that need no mDNS resolution.
+	se := webrtc.SettingEngine{}
+	se.SetICEMulticastDNSMode(ice.MulticastDNSModeDisabled)
+	pc, err := webrtc.NewAPI(webrtc.WithSettingEngine(se)).NewPeerConnection(webrtc.Configuration{})
 	if err != nil {
 		t.Fatal(err)
 	}

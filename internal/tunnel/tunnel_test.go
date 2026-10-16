@@ -104,3 +104,21 @@ func testKey(t *testing.T) ssh.PublicKey {
 	}
 	return s.PublicKey()
 }
+
+// A client whose processes ignore SIGTERM (as seen on the macOS CI runner)
+// keeps the output pipe open through its children; Close must still return fast.
+func TestCloseWhenSIGTERMIsIgnored(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("uses sh")
+	}
+	p, _ := FromCustom(Custom{Command: []string{"sh", "-c", "trap '' TERM; echo https://stubborn.example.net; sleep 30; true"}, URLRegex: `https://\S+`, Secure: true})
+	tun, err := Start(context.Background(), p, 1, false, 5*time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	start := time.Now()
+	tun.Close()
+	if d := time.Since(start); d > 5*time.Second {
+		t.Fatalf("Close took %s", d)
+	}
+}

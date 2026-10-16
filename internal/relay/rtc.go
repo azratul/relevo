@@ -34,8 +34,10 @@ func (s *Server) rtcAPI() *webrtc.API {
 		se := webrtc.SettingEngine{}
 		// Fast failure detection; consent freshness keeps the path alive.
 		se.SetICETimeouts(4*time.Second, 8*time.Second, 2*time.Second)
-		// Browsers hide host IPs behind mDNS .local candidates.
-		se.SetICEMulticastDNSMode(ice.MulticastDNSModeQueryAndGather)
+		// Resolve the browsers' mDNS .local candidates, but announce real IPs:
+		// gathering .local names needs our own mDNS responder on port 5353,
+		// which mDNSResponder owns on macOS (the names would never resolve).
+		se.SetICEMulticastDNSMode(ice.MulticastDNSModeQueryOnly)
 		if os.Getenv("RELEVO_TEST_RTC_NO_ROUTE") == "1" {
 			// Test hook: offer no candidates, as if no network path existed, so ICE
 			// fails and controllers must stay on the tunnel (E2E NO_P2P=1).
