@@ -91,15 +91,15 @@ func providers() []Provider {
 				return []string{"http", "127.0.0.1:" + strconv.Itoa(p), "--log", "stdout", "--log-format", "logfmt"}
 			},
 			url: regexp.MustCompile(`url=(https://[^\s"]+)`)},
-		{ID: "localhost.run", ClientIP: false, Name: "localhost.run", Builtin: true, Secure: true, Account: "no",
-			Notes: "built in; HTTPS; does not pass the speakers' IP",
-			native: func(ctx context.Context, p int) (*Tunnel, error) {
-				return startSSH(ctx, "localhost.run:22", "nokey", p, regexp.MustCompile(`tunneled with tls termination, (https://[a-z0-9.-]+)`))
-			}},
 		{ID: "serveo", ClientIP: true, Name: "serveo.net", Builtin: true, Secure: true, Account: "no",
 			Notes: "built in; HTTPS; speakers accept a warning page the first time",
 			native: func(ctx context.Context, p int) (*Tunnel, error) {
 				return startSSH(ctx, "serveo.net:22", "relevo", p, regexp.MustCompile(`https://[a-z0-9.-]+\.(?:serveo\.net|serveousercontent\.com)`))
+			}},
+		{ID: "localhost.run", ClientIP: false, Name: "localhost.run", Builtin: true, Secure: true, Account: "no",
+			Notes: "built in; HTTPS; does not pass the speakers IP",
+			native: func(ctx context.Context, p int) (*Tunnel, error) {
+				return startSSH(ctx, "localhost.run:22", "nokey", p, regexp.MustCompile(`tunneled with tls termination, (https://[a-z0-9.-]+)`))
 			}},
 		{ID: "tailscale", ClientIP: false, Name: "Tailscale Funnel", Binary: "tailscale", Secure: true, Account: "yes (tailnet with Funnel enabled)",
 			Notes: "Funnel must be allowed in the tailnet policy", InstallHint: "https://tailscale.com/download",
