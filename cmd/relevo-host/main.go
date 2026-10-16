@@ -36,6 +36,7 @@ func init() {
 }
 
 func main() {
+	detachOwnConsole()
 	if err := run(); err != nil {
 		fmt.Fprintln(os.Stderr, "relevo-host:", err)
 		os.Exit(1)
@@ -196,6 +197,16 @@ func run() error {
 		return fmt.Errorf("unknown command %q", flag.Arg(0))
 	}
 
+	// Already running (e.g. launched again from the app menu): show its panel.
+	if !*start && !*noTray {
+		if panel := runningPanel(*cfgPath); panel != "" {
+			if !*noBrowser {
+				openBrowser(panel)
+			}
+			fmt.Println(T("panel"), panel)
+			return nil
+		}
+	}
 	agent, err := hostagent.New(cfg, *cfgPath, version, log)
 	if err != nil {
 		return err
@@ -205,6 +216,7 @@ func run() error {
 		return err
 	}
 	defer admin.Close()
+	defer writeInstance(*cfgPath, admin.URL())()
 	fmt.Println(T("panel"), admin.URL())
 	if *start {
 		var choice *hostagent.Connection

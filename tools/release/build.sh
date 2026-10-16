@@ -18,10 +18,17 @@ for target in "$@"; do
   exe=relevo-host; [ "$os" = windows ] && exe=relevo-host.exe
   GOOS=$os GOARCH=$arch go build -trimpath -ldflags "-s -w -X main.version=$VERSION" -o "$work/$exe" ./cmd/relevo-host
   cp LICENSE README.md "$work/"
+  # Icons used by the install scripts to register the app with the desktop.
+  case "$os" in
+    windows) extra="relevo.ico" ;;
+    darwin) extra="relevo.icns" ;;
+    *) extra="relevo.png relevo.svg" ;;
+  esac
+  for f in $extra; do cp "assets/icons/$f" "$work/"; done
   if [ "$os" = windows ]; then
-    (cd "$work" && python3 -c 'import sys,zipfile; z=zipfile.ZipFile(sys.argv[1],"w",zipfile.ZIP_DEFLATED); [z.write(f) for f in sys.argv[2:]]' "$OLDPWD/$OUT/$name.zip" "$exe" LICENSE README.md)
+    (cd "$work" && python3 -c 'import sys,zipfile; z=zipfile.ZipFile(sys.argv[1],"w",zipfile.ZIP_DEFLATED); [z.write(f) for f in sys.argv[2:]]' "$OLDPWD/$OUT/$name.zip" "$exe" LICENSE README.md $extra)
   else
-    tar -C "$work" -czf "$OUT/$name.tar.gz" "$exe" LICENSE README.md
+    tar -C "$work" -czf "$OUT/$name.tar.gz" "$exe" LICENSE README.md $extra
   fi
   rm -rf "$work"
   echo "built $name"
