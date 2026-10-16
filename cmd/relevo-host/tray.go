@@ -10,7 +10,7 @@ import (
 
 	"fyne.io/systray"
 
-	"relevo/internal/hostagent"
+	"github.com/azratul/relevo/internal/hostagent"
 )
 
 var errNoTray = errors.New("no system tray")

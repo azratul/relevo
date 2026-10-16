@@ -12,8 +12,8 @@ import (
 
 	"github.com/godbus/dbus/v5"
 
-	"relevo/internal/protocol"
-	"relevo/internal/secret"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/secret"
 )
 
 // portal uses org.freedesktop.portal.RemoteDesktop (GNOME, KDE and other

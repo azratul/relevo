@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 func TestCompileAndValidate(t *testing.T) {

@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"relevo/internal/relay"
-	"relevo/internal/secret"
-	"relevo/internal/tunnel"
-	webcontroller "relevo/web/controller"
+	"github.com/azratul/relevo/internal/relay"
+	"github.com/azratul/relevo/internal/secret"
+	"github.com/azratul/relevo/internal/tunnel"
+	webcontroller "github.com/azratul/relevo/web/controller"
 )
 
 // embedded is a relay running inside relevo-host, reachable from the

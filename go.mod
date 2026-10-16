@@ -1,4 +1,4 @@
-module relevo
+module github.com/azratul/relevo
 
 go 1.26.0
 

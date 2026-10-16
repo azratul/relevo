@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"relevo/internal/auth"
-	"relevo/internal/protocol"
-	"relevo/internal/ratelimit"
-	"relevo/internal/secret"
+	"github.com/azratul/relevo/internal/auth"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/ratelimit"
+	"github.com/azratul/relevo/internal/secret"
 )
 
 const maxBody = 8 * 1024

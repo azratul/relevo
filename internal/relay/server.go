@@ -17,9 +17,9 @@ import (
 
 	"github.com/pion/webrtc/v4"
 
-	"relevo/internal/auth"
-	"relevo/internal/protocol"
-	"relevo/internal/ratelimit"
+	"github.com/azratul/relevo/internal/auth"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/ratelimit"
 )
 
 type Server struct {

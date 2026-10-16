@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strconv"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // ActionDef is a semantic action and how it translates to keys locally.

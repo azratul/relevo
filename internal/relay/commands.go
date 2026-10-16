@@ -4,8 +4,8 @@ import (
 	"slices"
 	"time"
 
-	"relevo/internal/catalog"
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/catalog"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // handleCommand validates and routes a command.request (docs/protocol.md#comandos).

@@ -14,7 +14,7 @@ import (
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 
-	"relevo/api"
+	"github.com/azratul/relevo/api"
 )
 
 const schemaBase = "file:///api/schemas/"

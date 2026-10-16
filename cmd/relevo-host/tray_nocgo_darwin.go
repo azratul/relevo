@@ -6,7 +6,7 @@ import (
 	"errors"
 	"os"
 
-	"relevo/internal/hostagent"
+	"github.com/azratul/relevo/internal/hostagent"
 )
 
 var errNoTray = errors.New("tray needs a cgo build on macOS")

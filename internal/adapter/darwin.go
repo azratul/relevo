@@ -12,7 +12,7 @@ import (
 	"github.com/ebitengine/purego"
 	"github.com/ebitengine/purego/objc"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // mac injects with CGEventPost (requires the Accessibility permission) and

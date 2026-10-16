@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"relevo/api"
+	"github.com/azratul/relevo/api"
 )
 
 func TestExamplesConformToSchemas(t *testing.T) {

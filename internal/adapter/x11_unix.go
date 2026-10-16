@@ -14,7 +14,7 @@ import (
 	"github.com/jezek/xgb/xproto"
 	"github.com/jezek/xgb/xtest"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // x11 injects with the XTEST extension and checks focus with EWMH

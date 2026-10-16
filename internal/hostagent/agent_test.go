@@ -15,11 +15,11 @@ import (
 
 	"github.com/coder/websocket"
 
-	"relevo/internal/adapter"
-	"relevo/internal/auth"
-	"relevo/internal/protocol"
-	"relevo/internal/relay"
-	"relevo/internal/secret"
+	"github.com/azratul/relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/auth"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/relay"
+	"github.com/azratul/relevo/internal/secret"
 )
 
 // proxy forwards TCP and can sever every connection (network failure).

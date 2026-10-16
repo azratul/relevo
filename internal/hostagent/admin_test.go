@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/adapter"
 )
 
 func TestAdminPanelGuards(t *testing.T) {

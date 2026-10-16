@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"relevo/internal/auth"
+	"github.com/azratul/relevo/internal/auth"
 )
 
 // Config holds relay settings. See docs/self-hosting.md for the env variables.

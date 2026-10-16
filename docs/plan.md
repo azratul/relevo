@@ -8,7 +8,7 @@
 | 1. Contract and simulator | Done | OpenAPI 3.1.1, AsyncAPI 3.0.0, 36 schemas, 68 examples, [protocol](protocol.md) with state machines; simulated backend; independent Python controller; CI validators (`tools/contracts`, Go tests) | — |
 | 2. Vertical slice | Done | Embedded relay, session, password, separate credentials, host, web remote, next/previous; first native backend validated (Hyprland) with a real application (zathura) and two speakers; access without the password fails even through the API | — |
 | 3. Reliability and control | Done | Total order, deduplication with `clientSequence`, epochs and fencing, monotonic validity, heartbeat/lease, `unknown`, pause, removal, rotation, end, limits; crash tests before/after executing and before the ACK with the real agent | Reconcile results from the previous epoch when the host survives a cut (fewer `unknown`) |
-| 4. Desktop app and portability | Partial | Tray (Linux verified over D-Bus; Windows/macOS build), 4-step local panel, EN/ES, CLI, Windows/macOS/portal backends build, native CI builds configured, manual validation guide | Run CI; validate on real Windows, macOS, GNOME/KDE and FreeBSD; packaging (installers, signing, notarisation, third-party licences) |
+| 4. Desktop app and portability | Partial | Tray (Linux verified over D-Bus; Windows/macOS build), 4-step local panel, EN/ES, CLI, Windows/macOS/portal backends build, native CI builds on Windows and macOS, release pipeline with checksummed archives, `install.sh`/`install.ps1`, `go install`, manual validation guide | Validate on real Windows, macOS, GNOME/KDE and FreeBSD; code signing and notarisation; third-party licence file |
 | 5. No-server delivery and extensibility | Done | One binary with embedded relay, built-in tunnels (serveo, localhost.run, bore.pub) and WebRTC; independent client; adapter guide ([plugin development](plugin-development.md)) | — |
 | 6. Validation and delivery | Done | [Tests and results](testing.md), [dependency review](dependencies.md), README, guides | — |
 
@@ -25,10 +25,10 @@
 
 **P0 — before real-world use**
 1. Test P2P between two real networks (mobile data ↔ home network) and measure the ICE success rate; test cloudflared and Tailscale Funnel.
-2. Publish the repository and run CI (native Windows/macOS builds, X11 test with Xvfb, E2E); pin actions by SHA.
+2. Pin GitHub Actions by SHA and move to their Node 24 majors.
 3. Manual validation on Windows (PowerPoint, LibreOffice; the UIPI case) and macOS (Keynote, PowerPoint; Accessibility permission) following [the guide](platform-support.md#manual-validation-guide).
 4. Test the `portal` backend on GNOME and KDE.
-5. Packaging: generated `THIRD_PARTY_LICENSES`, signed/notarised binaries (macOS), Windows installer, Linux packages, optional autostart.
+5. Packaging: generated `THIRD_PARTY_LICENSES` in the release archives, signed/notarised binaries (macOS, Windows), Linux packages, optional autostart.
 
 **P1**
 6. Targeted adapters with effect verification (`effect-verified`): zathura over D-Bus, LibreOffice Impress (UNO), PowerPoint (COM), Keynote (AppleScript/JXA).

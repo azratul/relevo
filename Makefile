@@ -13,7 +13,7 @@ web:
 	cd web/controller && npm ci --no-audit --no-fund && npm run build
 
 host:
-	$(GO) build -trimpath -ldflags '$(LDFLAGS)' -o bin/relevo-host ./cmd/host
+	$(GO) build -trimpath -ldflags '$(LDFLAGS)' -o bin/relevo-host ./cmd/relevo-host
 
 test:
 	$(GO) vet ./...
@@ -34,7 +34,7 @@ cross:
 	@for t in linux/amd64 linux/arm64 windows/amd64 darwin/amd64 darwin/arm64 freebsd/amd64; do \
 	  os=$${t%/*}; arch=$${t#*/}; ext=; [ $$os = windows ] && ext=.exe; \
 	  echo "== $$t"; \
-	  GOOS=$$os GOARCH=$$arch $(GO) build -trimpath -ldflags '$(LDFLAGS)' -o dist/$$os-$$arch/relevo-host$$ext ./cmd/host || exit 1; \
+	  GOOS=$$os GOARCH=$$arch $(GO) build -trimpath -ldflags '$(LDFLAGS)' -o dist/$$os-$$arch/relevo-host$$ext ./cmd/relevo-host || exit 1; \
 	done
 
 clean:

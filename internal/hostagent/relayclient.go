@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // SessionInfo is what the host keeps about its session. The password stays in

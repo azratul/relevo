@@ -11,8 +11,8 @@ import (
 	"github.com/pion/ice/v4"
 	"github.com/pion/webrtc/v4"
 
-	"relevo/internal/protocol"
-	"relevo/internal/secret"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/secret"
 )
 
 // rtcPeer is a Go stand-in for the browser side of the DataChannel.

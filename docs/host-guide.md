@@ -4,13 +4,15 @@
 
 It is **a single binary**: the relay, the web remote, the local panel and the built-in tunnels are all inside.
 
-Build it from the repository (there are no signed packages yet):
-
 ```sh
-make web host          # bin/relevo-host
-# Windows: go build -o relevo-host.exe ./cmd/host
-# macOS with tray: CGO_ENABLED=1 go build -o relevo-host ./cmd/host (on a Mac)
+curl -fsSL https://raw.githubusercontent.com/azratul/relevo/main/install.sh | sh     # Linux, macOS, FreeBSD
+irm https://raw.githubusercontent.com/azratul/relevo/main/install.ps1 | iex          # Windows (PowerShell)
+go install github.com/azratul/relevo/cmd/relevo-host@latest                          # with Go ≥ 1.26
 ```
+
+The scripts verify the SHA-256 checksum of the release archive and install without root (`~/.local/bin`, or `%LOCALAPPDATA%\relevo` on Windows). Binaries are not signed yet: on Windows SmartScreen may warn the first time; on macOS a binary downloaded with a browser is quarantined by Gatekeeper (the install script uses curl, so it is not).
+
+From source: `make web host` (Go ≥ 1.26 and Node ≥ 22) produces `bin/relevo-host`.
 
 On Linux, depending on the input backend: Hyprland (`hyprland`), the `wtype` program (`wtype`), an X11 or XWayland session (`x11`), or a portal with RemoteDesktop on GNOME/KDE (`portal`). None of them needs root.
 

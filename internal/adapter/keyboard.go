@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // Window identifies a top-level window or application.

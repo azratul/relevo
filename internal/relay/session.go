@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"relevo/internal/auth"
-	"relevo/internal/catalog"
-	"relevo/internal/protocol"
-	"relevo/internal/ratelimit"
+	"github.com/azratul/relevo/internal/auth"
+	"github.com/azratul/relevo/internal/catalog"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/ratelimit"
 )
 
 type cmdRecord struct {

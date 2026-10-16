@@ -1,6 +1,6 @@
 # Tests and results
 
-Results on Arch Linux x86_64, Hyprland 0.56.2 (Wayland), Go 1.27.2 (the module requires ≥ 1.26), Node 26.11.1, Chrome stable and Firefox 157.0.1. The GitHub Actions workflow exists but has not run yet.
+Results on Arch Linux x86_64, Hyprland 0.56.2 (Wayland), Go 1.27.2 (the module requires ≥ 1.26), Node 26.11.1, Chrome stable and Firefox 157.0.1. CI runs on GitHub Actions (Linux, Windows and macOS).
 
 ## How to run
 
@@ -22,7 +22,7 @@ CI never injects real key presses except against Xvfb.
 
 | Suite | Result |
 |---|---|
-| `go test ./...` | 44 tests PASS, 2 SKIP (X11 needs a disposable display; live tunnels are opt-in) |
+| `go test ./...` | 46 tests PASS, 2 SKIP (X11 needs a disposable display; live tunnels are opt-in) |
 | `go test -race ./...` | PASS |
 | `TestX11Injection` against a nested Xwayland `:97` (`-count=3`) | PASS |
 | `make contracts` | PASS: Redocly clean, AsyncAPI valid (21 messages), 36 schemas in the common subset, 68 examples with the same verdict under draft-07 and 2020-12, schema and error-code coverage |
@@ -67,6 +67,8 @@ Round trip measured by the Python client from sending `command.request` to recei
 Reading: Relevo's own cost is about 1 ms; the rest is the network between speaker and host (through the tunnel, or direct with P2P). This is not a universal Internet figure. For keys, `executed` means "key injected", not "slide changed"; in the zathura test the page change was checked separately over D-Bus.
 
 ## Bugs found by the tests (and fixed)
+
+- macOS CI: closing a tunnel took 30 s. The client's child process survived SIGTERM (most likely ignored, inherited from the runner) and killing only the client left that child holding the output pipe. The whole process group now gets SIGKILL after 1 s and `WaitDelay` bounds the wait; `TestCloseWhenSIGTERMIsIgnored` reproduces it on Linux.
 
 - Host panel: `section { display:grid }` overrode the `hidden` attribute and all four steps were visible at once. The tests only checked the attribute; screenshot review caught it. `[hidden]` is now `display:none !important` and the E2E asserts real visibility.
 - Built-in SSH client: `x/crypto` rejects `forwarded-tcpip` channels whose address differs from the requested one (serveo and localhost.run announce another) → they are accepted directly; localhost.run never answers a want-reply `shell` → it is sent without waiting; a `known_hosts` entry of another key type looked like a mismatch → ED25519 is preferred and a new key type is pinned (a different key of the same type is still refused).

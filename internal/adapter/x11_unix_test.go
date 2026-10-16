@@ -12,7 +12,7 @@ import (
 	"github.com/jezek/xgb"
 	"github.com/jezek/xgb/xproto"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // TestX11Injection needs a DISPOSABLE X server (Xvfb or a nested Xwayland),

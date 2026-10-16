@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // InterfaceVersion of the Go adapter interface. Bump on breaking changes.

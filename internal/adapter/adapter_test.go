@@ -7,7 +7,7 @@ import (
 	"slices"
 	"testing"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 func TestParseChordWhitelist(t *testing.T) {

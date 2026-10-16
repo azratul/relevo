@@ -11,8 +11,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"relevo/internal/adapter"
-	"relevo/internal/tunnel"
+	"github.com/azratul/relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/tunnel"
 )
 
 // Config is the local, administrative configuration of the host. Key

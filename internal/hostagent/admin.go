@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"relevo/internal/adapter"
-	"relevo/internal/secret"
+	"github.com/azratul/relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/secret"
 )
 
 //go:embed adminui

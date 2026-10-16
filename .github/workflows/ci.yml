@@ -22,6 +22,7 @@ jobs:
         with: { go-version-file: go.mod }
       - run: go vet ./...
       - run: CGO_ENABLED=1 go test -race -count=1 ./...
+      - run: go install ./cmd/relevo-host && relevo-host version
       # X11/XTEST injection against a disposable Xvfb server (never a desktop).
       - run: sudo apt-get update && sudo apt-get install -y xvfb
       - run: |
@@ -32,6 +33,7 @@ jobs:
 
   native-build:
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -43,10 +45,10 @@ jobs:
       - run: go test -count=1 ./internal/...
       - name: build host (macOS with cgo for the tray)
         if: runner.os == 'macOS'
-        run: CGO_ENABLED=1 go build -o relevo-host ./cmd/host && ./relevo-host backends
+        run: CGO_ENABLED=1 go build -o relevo-host ./cmd/relevo-host && ./relevo-host backends
       - name: build host (Windows)
         if: runner.os == 'Windows'
-        run: go build -o relevo-host.exe ./cmd/host && ./relevo-host.exe backends
+        run: go build -o relevo-host.exe ./cmd/relevo-host && ./relevo-host.exe backends
 
   web-e2e:
     runs-on: ubuntu-latest
@@ -57,6 +59,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "24" }
       - run: make web host
+      # The built remote is committed (go install cannot run npm): it must match the sources.
+      - run: git diff --exit-code -- web/controller/dist
       - run: cd web/controller && npm run e2e
         env:
           CHROME: /usr/bin/google-chrome

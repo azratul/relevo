@@ -14,12 +14,12 @@ import (
 
 	"github.com/coder/websocket"
 
-	"relevo/internal/adapter"
-	"relevo/internal/catalog"
-	"relevo/internal/protocol"
-	"relevo/internal/relay"
-	"relevo/internal/secret"
-	"relevo/internal/tunnel"
+	"github.com/azratul/relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/catalog"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/relay"
+	"github.com/azratul/relevo/internal/secret"
+	"github.com/azratul/relevo/internal/tunnel"
 )
 
 const (

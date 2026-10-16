@@ -13,7 +13,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // win injects with SendInput and verifies focus with GetForegroundWindow.

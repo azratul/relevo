@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // hyprland is a TARGETED backend: it uses Hyprland's IPC to deliver the key

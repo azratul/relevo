@@ -15,9 +15,9 @@ import (
 
 	"github.com/coder/websocket"
 
-	"relevo/internal/auth"
-	"relevo/internal/protocol"
-	"relevo/internal/secret"
+	"github.com/azratul/relevo/internal/auth"
+	"github.com/azratul/relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/secret"
 )
 
 type env struct {

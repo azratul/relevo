@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // wtype injects through the wlroots virtual-keyboard protocol (wlroots

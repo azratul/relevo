@@ -22,13 +22,32 @@ Free software (MIT) with **no server**: no accounts, no telemetry and no Relevo 
 - Each command shows whether it was rejected, executed or whether the outcome is **unknown** (it is never retried automatically).
 - English by default, with an EN/ES switch in the host panel and in the remote.
 
-## Usage
+## Install
 
-Building needs Go ≥ 1.26 and Node ≥ 22.
+Linux, macOS and FreeBSD:
 
 ```sh
-make web host                         # builds a single binary: bin/relevo-host
-./bin/relevo-host                     # opens the panel: pick a tunnel (serveo by default) and create the session
+curl -fsSL https://raw.githubusercontent.com/azratul/relevo/main/install.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/azratul/relevo/main/install.ps1 | iex
+```
+
+With Go ≥ 1.26:
+
+```sh
+go install github.com/azratul/relevo/cmd/relevo-host@latest
+```
+
+The scripts download the binary for your system from the [latest release](https://github.com/azratul/relevo/releases/latest), verify its SHA-256 checksum and install it in `~/.local/bin` (`%LOCALAPPDATA%\relevo` on Windows) without root. `RELEVO_VERSION=v0.1.0` installs a specific release and `RELEVO_INSTALL_DIR` changes the directory. Release binaries for macOS include the tray; the ones from `go install` include it too when cgo is available (the default on macOS with Xcode command-line tools).
+
+## Usage
+
+```sh
+relevo-host                           # opens the panel: pick a tunnel (serveo by default) and create the session
 ```
 
 Nothing else needs to be installed: serveo.net, localhost.run and bore.pub are built into the binary. The panel guides you in four steps: **Session** (how speakers connect) → **Target & actions** (the presentation window) → **Active session** (link and password to share) → **Speakers & activity**.
@@ -36,9 +55,9 @@ Nothing else needs to be installed: serveo.net, localhost.run and bore.pub are b
 Without the graphical panel:
 
 ```sh
-./bin/relevo-host --tunnel serveo --start        # or localhost.run, bore; ngrok/cloudflared/tailscale if installed
-./bin/relevo-host --start                        # asks in the terminal which tunnel to use
-./bin/relevo-host --tunnel url:https://my.domain --local-port 8787 --start   # your own tunnel/proxy
+relevo-host --tunnel serveo --start        # or localhost.run, bore; ngrok/cloudflared/tailscale if installed
+relevo-host --start                        # asks in the terminal which tunnel to use
+relevo-host --tunnel url:https://my.domain --local-port 8787 --start   # your own tunnel/proxy
 ```
 
 `relevo-host backends` lists the input backends and tunnels. The `sim` backend presses no real keys; to control a presentation pick a real backend and the target window (panel, or `relevo-host windows`). Full guide: [docs/host-guide.md](docs/host-guide.md).
@@ -47,7 +66,7 @@ Without the graphical panel:
 
 | Component | Path | What it is |
 |---|---|---|
-| Host | `cmd/host`, `internal/hostagent`, `internal/adapter`, `internal/tunnel` | Tray + local panel + CLI; embedded relay; tunnels; keyboard adapters |
+| Host | `cmd/relevo-host`, `internal/hostagent`, `internal/adapter`, `internal/tunnel` | Tray + local panel + CLI; embedded relay; tunnels; keyboard adapters |
 | Relay | `internal/relay` | HTTP + WebSocket + WebRTC inside `relevo-host`; sessions, Argon2id login, routing |
 | Web remote | `web/controller` | TypeScript + Vite, no framework and no runtime dependencies |
 | Contract | `api/` | OpenAPI, AsyncAPI, JSON Schema and examples (source of truth) |
@@ -79,12 +98,18 @@ Details and evidence: [docs/platform-support.md](docs/platform-support.md).
 
 ## Development
 
+Building from source needs Go ≥ 1.26 and Node ≥ 22:
+
 ```sh
+make web host    # bin/relevo-host
+
 make test        # Go: unit + HTTP/WebSocket/WebRTC integration
 make contracts   # OpenAPI, AsyncAPI, schemas and examples (draft-07 and 2020-12)
 make e2e         # host panel + remote in real Chrome/Firefox: P2P, tunnel fallback, EN/ES
 TUNNEL=serveo node web/controller/e2e/live-tunnel.mjs   # optional live test through the Internet
 ```
+
+Releases: pushing a `vX.Y.Z` tag runs `.github/workflows/release.yml`, which builds the archives (`tools/release/build.sh`; macOS on a Mac runner with cgo), writes `checksums.txt` and publishes a GitHub release. The built web remote is committed in `web/controller/dist` so that `go install` can embed it; CI fails if it does not match the sources (`make web`).
 
 ## Licence
 

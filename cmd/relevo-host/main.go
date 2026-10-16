@@ -12,16 +12,28 @@ import (
 	"os/exec"
 	"os/signal"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"syscall"
 	"time"
 
-	"relevo/internal/adapter"
-	"relevo/internal/hostagent"
-	"relevo/internal/tunnel"
+	"github.com/azratul/relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/hostagent"
+	"github.com/azratul/relevo/internal/tunnel"
 )
 
+// version is set with -ldflags in release builds; `go install …@vX.Y.Z`
+// records the module version in the build info instead.
 var version = "dev"
+
+func init() {
+	if version != "dev" {
+		return
+	}
+	if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" && bi.Main.Version != "(devel)" {
+		version = bi.Main.Version
+	}
+}
 
 func main() {
 	if err := run(); err != nil {

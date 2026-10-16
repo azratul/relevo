@@ -13,7 +13,7 @@ import (
 	"github.com/pion/ice/v4"
 	"github.com/pion/webrtc/v4"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // WebRTC DataChannel transport (ADR-0014). Signalling is a single HTTP

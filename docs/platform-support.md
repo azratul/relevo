@@ -5,7 +5,7 @@ Three things are often confused and are kept apart here: whether the **web remot
 Legend:
 
 - **Tested**: actually run in this project, with the evidence given.
-- **Tested (CI)**: covered by a job in `.github/workflows/ci.yml` that has **not run yet** on GitHub.
+- **Tested (CI)**: covered by a job in `.github/workflows/ci.yml`.
 - **Builds**: cross-compilation verified (`make cross`, `go vet` per GOOS/GOARCH). Not a functional test.
 - **Not available**: no supported way exists; the reason is given.
 

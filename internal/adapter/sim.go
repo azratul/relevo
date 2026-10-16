@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 // Sim is a simulated backend: it records chords instead of injecting them.

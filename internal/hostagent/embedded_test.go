@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"relevo/internal/adapter"
-	"relevo/internal/tunnel"
+	"github.com/azratul/relevo/internal/adapter"
+	"github.com/azratul/relevo/internal/tunnel"
 )
 
 func freePort(t *testing.T) int {

@@ -1,0 +1,44 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - uses: actions/setup-node@v4
+        with: { node-version: "24" }
+      # The built remote is committed so that `go install` embeds it; it must be current.
+      - run: make web && git diff --exit-code -- web/controller/dist
+      - run: go test -count=1 ./...
+      - run: tools/release/build.sh "$GITHUB_REF_NAME" linux/amd64 linux/arm64 windows/amd64 windows/arm64 freebsd/amd64
+      - uses: actions/upload-artifact@v4
+        with: { name: release-other, path: dist/release/* }
+
+  build-macos:
+    # Built on a Mac with cgo so the binary includes the tray icon.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - run: CGO_ENABLED=1 tools/release/build.sh "$GITHUB_REF_NAME" darwin/arm64 darwin/amd64
+      - uses: actions/upload-artifact@v4
+        with: { name: release-macos, path: dist/release/* }
+
+  publish:
+    needs: [build, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { pattern: release-*, merge-multiple: true, path: dist/release }
+      - run: cd dist/release && sha256sum * > checksums.txt && cat checksums.txt
+      - run: gh release create "$GITHUB_REF_NAME" dist/release/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

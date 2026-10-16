@@ -8,7 +8,7 @@ import (
 
 	"github.com/coder/websocket"
 
-	"relevo/internal/protocol"
+	"github.com/azratul/relevo/internal/protocol"
 )
 
 func errCode(m msg) string {
